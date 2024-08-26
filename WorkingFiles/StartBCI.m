@@ -1,0 +1,1 @@
+[BaseDir, endchar] = Initialise('mac');

@@ -1,0 +1,25 @@
+# Ignore all .set files
+*.set
+
+# Ignore all .fdt files
+*.fdt
+
+# Ignore all .fwd files
+*.fwd
+
+# Ignore all .DS_Store files
+.DS_Store
+
+# Ignore the entire OwnData directory
+OwnData/
+
+# Ignore directory containing generated MATLAB data
+MatlabGeneratedData/
+
+# Ignore directory containing eeglab
+eeglab2024.1/
+
+# Ignore files related to OS's in WorkingFiles directory
+WorkingFiles/SetupDir.m
+WorkingFiles/pathdef_MAC.m
+WorkingFiles/pathdef_WIN.m
