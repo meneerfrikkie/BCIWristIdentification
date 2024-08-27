@@ -12,4 +12,4 @@ subjectnames = {'P1','P5'};
 CH_selection = {'C3','c3','Fp1','fp1','c4','C4'};
 
 process_eeg_data(subjectnames,CH_selection); 
-disp(getChannelKeys(CH_selection\
+disp(getChannelKeys(CH_selection))
