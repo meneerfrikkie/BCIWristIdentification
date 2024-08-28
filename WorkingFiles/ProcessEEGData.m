@@ -1,4 +1,4 @@
-function process_eeg_data(subjectnames, CH_selection_string)
+function ProcessEEGData(subjectnames, CH_selection_string)
     % process_eeg_data - Process EEG data based on subject names and channel selections.
     %
     % Syntax: process_eeg_data(subjectnames, CH_selection)
