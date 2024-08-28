@@ -1,10 +1,23 @@
 function instantaneousPhase = SingleTrialChannelIP(trial, t1, t2, times)
-    % Find the indices corresponding to the times t1 and t2
-    index_t1 = find(times == t1); 
+    % Function to compute the instantaneous phase of a single trial channel
+    % within a specified time range using the Hilbert transform.
+
+    % Find the index corresponding to the start time t1
+    index_t1 = find(times == t1);
+    
+    % Find the index corresponding to the end time t2
     index_t2 = find(times == t2);
+    
+    % Debugging aid: display the size of the times array
     disp(size(times))
-    % Extract the signal between the two times and compute the instantaneous phase
-    trialSegment = trial(index_t1:index_t2); % Extract the segment of the trial
-    analyticSignal = hilbert(trialSegment); % Compute the analytic signal using the Hilbert transform
-    instantaneousPhase = unwrap(angle(analyticSignal)); % Compute and unwrap the phase to reduce effect of discontinuties
+    
+    % Extract the segment of the trial corresponding to the time range [t1, t2]
+    trialSegment = trial(index_t1:index_t2); 
+    
+    % Compute the analytic signal of the trial segment using the Hilbert transform
+    analyticSignal = hilbert(trialSegment); 
+    
+    % Compute the instantaneous phase of the analytic signal
+    % Unwrap the phase to avoid discontinuities caused by phase jumps
+    instantaneousPhase = unwrap(angle(analyticSignal)); 
 end

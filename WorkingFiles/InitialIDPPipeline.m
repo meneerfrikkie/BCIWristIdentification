@@ -13,4 +13,12 @@ process_eeg_data({'P1'},CH_selection);
 data = load('OwnData\P1RH\MatlabGeneratedData\P1RH_Data_MultipleCH_ERDS.mat');
 data_WE = data.data_WE;
 SingleTrialIDP(data_WE(1,:,:),CH_selection,CH_pairs,5000,8000,data.times);
+% Prompt the user to load a .mat file containing the data
+    [file, path] = uigetfile('*.mat', 'Select the MATLAB data file');
+    if isequal(file, 0)
+        disp('User canceled the operation');
+        return;
+    end
+data_WE = data.data_WE;
+SingleTrialIDPTable = SingleTrialIDP(data_WE(1,:,:),CH_selection,CH_pairs,5000,8000,data.times);
 
