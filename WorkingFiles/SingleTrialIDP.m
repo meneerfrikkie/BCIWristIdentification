@@ -42,8 +42,8 @@ function IDP = SingleTrialIDP(data, CH_selection, CH_pairs, t1, t2, times)
         varianceValue = var(abs(data1 - data2));
 
         % Store results in the table
-        IDP.Mean(i) = meanValue;
-        IDP.Std(i) = stdValue;
-        IDP.Variance(i) = varianceValue;
+        IDP{1,i} = meanValue;
+        IDP{2,i} = stdValue;
+        IDP{3,i} = varianceValue;
     end
 end
