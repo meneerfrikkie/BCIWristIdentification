@@ -1,1 +1,1 @@
-[BaseDir, endchar] = Initialise('mac');
+[BaseDir, endchar] = Initialise('win');

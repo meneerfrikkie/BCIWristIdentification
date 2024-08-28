@@ -9,7 +9,7 @@ process_eeg_data({'P1'},CH_selection);
 
 %Go for multi trial in multi trial the function for single trial
 %calculation will be done 
-%% 
+%% Signle trials but multiple pairs 
 data = load('OwnData\P1RH\MatlabGeneratedData\P1RH_Data_MultipleCH_ERDS.mat');
 data_WE = data.data_WE;
 SingleTrialIDP(data_WE(1,:,:),CH_selection,CH_pairs,5000,8000,data.times);
@@ -21,4 +21,9 @@ SingleTrialIDP(data_WE(1,:,:),CH_selection,CH_pairs,5000,8000,data.times);
     end
 data_WE = data.data_WE;
 SingleTrialIDPTable = SingleTrialIDP(data_WE(1,:,:),CH_selection,CH_pairs,5000,8000,data.times);
+%% Multiple trials 
+
+data = load('OwnData\P1RH\MatlabGeneratedData\P1RH_Data_MultipleCH_ERDS.mat')
+data_WE = data.data_WE; 
+MultipleTrialsIDP(data_WE,CH_pairs,CH_selection,5000,8000,data.times)
 
