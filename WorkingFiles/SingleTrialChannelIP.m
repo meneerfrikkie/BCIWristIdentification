@@ -19,5 +19,5 @@ function instantaneousPhase = SingleTrialChannelIP(trial, t1, t2, times)
     
     % Compute the instantaneous phase of the analytic signal
     % Unwrap the phase to avoid discontinuities caused by phase jumps
-    instantaneousPhase = unwrap(angle(analyticSignal)); 
+    instantaneousPhase = angle(analyticSignal); 
 end

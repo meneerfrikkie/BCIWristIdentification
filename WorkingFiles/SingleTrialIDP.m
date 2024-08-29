@@ -40,6 +40,10 @@ function IDP = SingleTrialIDP(data, CH_selection, CH_pairs, t1, t2, times)
         stdValue = std(abs(data1 - data2));
         varianceValue = var(abs(data1 - data2));
 
+        % meanValue = mean(mod(data1 - data2 + pi, 2*pi)- pi);
+        % stdValue = std(mod(data1 - data2 + pi, 2*pi)- pi);
+        % varianceValue = var(mod(data1 - data2 + pi, 2*pi)- pi);
+
         % Store results in the table
         IDP{1,i} = meanValue;
         IDP{2,i} = stdValue;
