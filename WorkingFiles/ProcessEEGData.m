@@ -1,4 +1,4 @@
-function process_eeg_data(subjectnames, CH_selection_string)
+function ProcessEEGData(subjectnames, CH_selection_string)
     % process_eeg_data - Process EEG data based on subject names and channel selections.
     %
     % Syntax: process_eeg_data(subjectnames, CH_selection)
@@ -19,7 +19,7 @@ function process_eeg_data(subjectnames, CH_selection_string)
     Dataset_suffix = 'ERDS';  
 
     %Convert passed in channels names to the channel key 
-    CH_selection = getChannelKeys(CH_selection_string);
+    CH_selection = GetChannelKeys(CH_selection_string);
 
     for i =1:length(CH_selection)
         fprintf('Selected channel: %s -> %d\n', CH_selection_string{i}, CH_selection(i))
