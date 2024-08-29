@@ -24,6 +24,6 @@ function requiredChannels = CheckChannelPairs(CH_pairs)
     requiredChannels = uniqueChannels;
     
     % Display the result
-    disp('Required Channels:');
-    disp(requiredChannels);
+    % disp('Required Channels:');
+    % disp(requiredChannels);
 end

@@ -30,7 +30,6 @@ function IDP = SingleTrialIDP(data, CH_selection, CH_pairs, t1, t2, times)
             error('Channel names %s or %s not found in CH_selection.', ch1, ch2);
         end
 
-        disp(size(data))
         % Extract data for the specific channel and pass the required time
         % that the instantaneous phase will be calculated for
         data1 = SingleTrialChannelIP(data(1,:,col1),t1,t2,times);
