@@ -16,6 +16,9 @@ OwnData/
 # Ignore directory containing generated MATLAB data
 MatlabGeneratedData/
 
+# Ignore autosave files
+*.asv
+
 # Ignore directory containing eeglab
 eeglab2024.1/
 
