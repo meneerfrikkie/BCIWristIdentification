@@ -26,12 +26,10 @@ channel_pairs = {};
 
 % Generate all possible pairs and store them as strings
 for i = 1:length(channels)
-    for j = 1:length(channels)
-        if i ~= j
+    for j = i+1:length(channels)
             % Create a string in the format 'channel{i}-channel{j}'
             pair = sprintf('%s-%s', channels{i}, channels{j});
             channel_pairs{end+1} = pair;
-        end
     end
 end
 

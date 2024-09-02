@@ -44,9 +44,11 @@ function IDP = SingleTrialIDPDiffFormat(data, CH_selection, CH_pairs, t1, t2, ti
         data2 = SingleTrialChannelIP(data(1,:,col2),t1,t2,times);
 
         % Compute statistics
-        meanValue = mean(abs(data1 - data2));
-        stdValue = std(abs(data1 - data2));
-        varianceValue = var(abs(data1 - data2));
+        IPD = mod((data1-data2 + pi),2*pi) - pi;
+
+        meanValue = mean(IPD);
+        stdValue = std(abs(IPD));
+        varianceValue = var(abs(IPD));
 
         % Store results in the table
         IDP{1, 3*i-2} = meanValue;
