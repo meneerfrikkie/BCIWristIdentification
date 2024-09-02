@@ -113,6 +113,7 @@ isCategoricalPredictor = [false, false, false, false, false, false, false, false
 
 % Perform cross-validation
 KFolds = 10;
+rng(1);
 cvp = cvpartition(response, 'KFold', KFolds);
 % Initialize the predictions to the proper sizes
 validationPredictions = response;
