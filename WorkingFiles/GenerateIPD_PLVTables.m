@@ -21,15 +21,9 @@ for i = 1:length(PatientIDs)
         data = load(sprintf('..\\OwnData\\%sRH\\MatlabGeneratedData\\%sRH_Data_MultipleCH_ERDS.mat', PatientID, PatientID));
         
     elseif ismac
-        % Prompt the user to load a .mat file containing the data
-        [file, path] = uigetfile('*.mat', 'Select the MATLAB data file');
-        if isequal(file, 0)
-            disp('User canceled the operation');
-            return;
-        end
-    
-        % Load the selected .mat file
-        data = load(fullfile(path, file));
+        % For MacOs
+        % Construct the file path using sprintf
+        data = load(sprintf('../OwnData/%sRH/MatlabGeneratedData/%sRH_Data_MultipleCH_ERDS.mat', PatientID, PatientID));
         
     else
         % For other operating systems (e.g., Linux)
