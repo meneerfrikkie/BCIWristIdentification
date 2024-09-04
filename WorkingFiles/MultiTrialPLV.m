@@ -33,21 +33,4 @@ function combinedPLVResults = MultiTrialPLV(data, CH_pairs, CH_selection, t1, t2
         % Concatenate the result vertically to the combinedPLVResults table
         combinedPLVResults = [combinedPLVResults; singleTrialPLV]; 
     end
-    
-    % Define the output directory dynamically using the patient ID
-    outputDir = fullfile('..', 'OwnResults', [patientID 'RH'], 'MatlabGeneratedData');
-    
-    % Create the directory if it doesn't exist
-    if ~exist(outputDir, 'dir')
-        mkdir(outputDir);
-    end
-    
-    % Define the filename based on the current date and time
-    outputFilename = fullfile(outputDir, ['CombinedPLVResults_' datestr(now, 'yyyy-mm-dd_HH-MM-SS') '.mat']);
-    
-    % Save the combined PLV results table to a .mat file
-    save(outputFilename, 'combinedPLVResults');
-    
-    % Notify the user that the data has been saved
-    fprintf('Combined PLV results table saved to %s\n', outputFilename);
 end

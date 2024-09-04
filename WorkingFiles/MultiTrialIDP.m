@@ -33,24 +33,4 @@ function combinedResults = MultipleTrialsIDP(data, CH_pairs, CH_selection, t1, t
         % Concatenate the result vertically to the combinedResults table
         combinedResults = [combinedResults; singleTrialResults]; 
     end
-    
-    % Display the final table with all results
-    % disp(combinedResults);
-    
-    % Define the output directory dynamically using the patient ID
-    outputDir = fullfile('..', 'OwnResults', [patientID 'RH'], 'MatlabGeneratedData');
-    
-    % Create the directory if it doesn't exist
-    if ~exist(outputDir, 'dir')
-        mkdir(outputDir);
-    end
-    
-    % Define the filename based on the current date and time
-    outputFilename = fullfile(outputDir, ['CombinedResults_' datestr(now, 'yyyy-mm-dd_HH-MM-SS') '.mat']);
-    
-    % Save the combined results table to a .mat file
-    save(outputFilename, 'combinedResults');
-    
-    % Notify the user that the data has been saved
-    fprintf('Combined results table saved to %s\n', outputFilename);
 end
