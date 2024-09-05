@@ -65,8 +65,8 @@ for p = 1:length(PatientIDs)
         %Feature selection
         startingNumberofFeatures = 1; 
         stepsize = 10; 
-        totalNumberofFeatures = 10; 
-        %totalNumberofFeatures = length(predictorNames); 
+        %totalNumberofFeatures = 10; 
+        totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
@@ -267,7 +267,7 @@ for p = 1:length(PatientIDs)
         saveas(gcf, fullPlotPathPNG);
 
         for f = 1:length(highestAccuraciesNumberFeatures)
-                    storedPredictorNames = HighestincludedPredictorNames{f,:};
+                    storedPredictorNames = HighestincludedPredictorNames(f,:);
 
                     % Construct the filename using the specified format
                     fileName = sprintf('SelectedFeatures_%d.mat',highestAccuraciesNumberFeatures(f));
