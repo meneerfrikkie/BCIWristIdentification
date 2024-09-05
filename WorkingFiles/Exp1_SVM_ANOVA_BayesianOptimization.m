@@ -1,7 +1,7 @@
 ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization";
-rng(1,"twister"); % Fixed seed for consistent results
+rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
-PatientIDs = {'P2'};
+PatientIDs = {'P1','P2'};
 ChosenTableStrings = {'PLVTable', 'IPDTable', 'IPD_PLVTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
@@ -64,9 +64,9 @@ for p = 1:length(PatientIDs)
         
         %Feature selection
         startingNumberofFeatures = 1; 
-        stepsize = 1; 
-        totalNumberofFeatures = 1; 
-        %totalNumberofFeatures = length(predictorNames); 
+        stepsize = 10; 
+        %totalNumberofFeatures = 1; 
+        totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
@@ -179,7 +179,7 @@ for p = 1:length(PatientIDs)
                 [precision, recall, f1Score, confusionAccuracy] = ConfusionMetrics(YtestFold, YtestPred);
                 
                 % Store average metrics across all classes for this fold
-                foldPrecision(fold) = mean(precision)
+                foldPrecision(fold) = mean(precision);
                 foldRecall(fold) = mean(recall);
                 foldF1Score(fold) = mean(f1Score);
             end
@@ -192,7 +192,7 @@ for p = 1:length(PatientIDs)
                         highestAccuracy = mean(foldAccuracy);
                         %Reset the varaibles for the new highest accuracy
                         highestAccuraciesNumberFeatures = [];
-                        HighestincludedPredictorNames = [];
+                        HighestincludedPredictorNames = {};
 
                         HighestAccuracyBestParams = [];
                    
@@ -205,10 +205,8 @@ for p = 1:length(PatientIDs)
 
                         %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
-                        HighestincludedPredictorNames = [HighestincludedPredictorNames;includedPredictorNames];
-
+                        HighestincludedPredictorNames = {HighestincludedPredictorNames;(includedPredictorNames)};
                         HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
-                   
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
                         HighestfoldRecalls = [HighestfoldRecalls,foldRecall']; 
@@ -216,10 +214,8 @@ for p = 1:length(PatientIDs)
                     elseif (mean(foldAccuracy) == highestAccuracy)
                                                %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
-                        HighestincludedPredictorNames = [HighestincludedPredictorNames;includedPredictorNames];
-
-                        HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
-                   
+                        HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
+                        HighestAccuracyBestParams = [HighestAccuracyBestParams;(bestParams)];
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
                         HighestfoldRecalls = [HighestfoldRecalls,foldRecall']; 
@@ -246,7 +242,9 @@ for p = 1:length(PatientIDs)
         
         % Construct the filename using the specified format
         fileName = sprintf('%s_%d_%d_%d.mat', ...
-                           ChosenTableString,startingNumberofFeatures, stepsize, totalNumberofFeatures);
+                          ChosenTableString,startingNumberofFeatures, stepsize, totalNumberofFeatures);
+        csvFileName = sprintf('%s_%d_%d_%d.csv', ...
+                          ChosenTableString,startingNumberofFeatures, stepsize, totalNumberofFeatures);
 
         anovaFolderPath = fullfile(folderPath, 'AnovaFeatureSelection');
 
@@ -259,6 +257,7 @@ for p = 1:length(PatientIDs)
         
         % Full path to save the .mat file in the AnovaFeatureSelection folder
         fullFilePath = fullfile(anovaFolderPath, fileName);
+        fullFilePathCSV = fullfile(anovaFolderPath, csvFileName);
         
         % Construct the filename using the specified format
         plotFileName = sprintf('%s_%d_%d_%d.fig', ...
@@ -271,30 +270,26 @@ for p = 1:length(PatientIDs)
         fullPlotPathPNG = fullfile(anovaFolderPath, plotFileNamePNG);
         % Save the accuracies and number of features to the .mat file
         save(fullFilePath, 'accuracies', 'numberofFeatures');
+        save(fullFilePathCSV,'accuracies','numberofFeatures');
         
         % Save the plot with the constructed filename
         saveas(gcf, fullPlotPath);
         saveas(gcf, fullPlotPathPNG);
-        anovaFolderPath = fullfile(folderPath, 'AnovaFeatureSelection');
 
         for f = 1:length(highestAccuraciesNumberFeatures)
-                    anovaFolderPath = fullfile(anovaFolderPath,ChosenTableString);
-                        
-                    % Check if the folder exists, if not, create it
-                    if ~exist(anovaFolderPath, 'dir')
-                        mkdir(anovaFolderPath);
-                    end
-                    
                     storedPredictorNames = HighestincludedPredictorNames(f,:);
 
                     % Construct the filename using the specified format
                     fileName = sprintf('SelectedFeatures_%d.mat',highestAccuraciesNumberFeatures(f));
+                    csvFilename = sprintf('SelectedFeatures_%d.csv',highestAccuraciesNumberFeatures(f));
                     
                     % Full path to save the .mat file in the AnovaFeatureSelection folder
                     fullFilePath = fullfile(anovaFolderPath, fileName);
+                    fullFilePathCSV = fullfile(anovaFolderPath,csvFilename);
                     
                     % Save the arrays to the .mat file
                     save(fullFilePath, 'storedPredictorNames');
+                    save(fullFilePathCSV,'storedPredictorNames');
 
 
                     % Define the path for Anova Feature Selection folder
@@ -312,14 +307,18 @@ for p = 1:length(PatientIDs)
                     % Construct the filename using the specified format
                     fileName = sprintf('%s_TunedParameters_%d.mat', ...
                                        ChosenTableString,highestAccuraciesNumberFeatures(f));
+                    csvFilename = sprintf('%s_TunedParameters_%d.csv', ...
+                                       ChosenTableString,highestAccuraciesNumberFeatures(f));
                     
                     % Full path to save the .mat file in the AnovaFeatureSelection folder
                     fullFilePath = fullfile(hyperparametertuningFolderPath, fileName);
+                    fullFilePathCSV = fullfile(hyperparametertuningFolderPath,csvFilename);
 
                     HighestAccuracyBestParam = HighestAccuracyBestParams(f,:);
                     
                     % Save the arrays to the .mat file
                     save(fullFilePath, 'HighestAccuracyBestParam');
+                    save(fullFilePathCSV,'HighestAccuracyBestParam');
                     
                     
                     %Store the results of the stratified k-fold cross-validation 
@@ -329,9 +328,11 @@ for p = 1:length(PatientIDs)
                     
                     % Create a filename based on the feature selection parameters
                     filename = sprintf('%s_EvaluationMetrics_%d.mat',ChosenTableString,highestAccuraciesNumberFeatures(f));
+                    csvFilename = sprintf('%s_EvaluationMetrics_%d.csv',ChosenTableString,highestAccuraciesNumberFeatures(f));
                     
                     % Specify the path where you want to save the file
                     savePath = fullfile(stratifiedCrossValidationPath, filename);
+                    savePathCSV = fullfile(stratifiedCrossValidationPath,filename); 
                     
                     % Check if the folder exists, if not, create it
                     if ~exist(stratifiedCrossValidationPath, 'dir')
@@ -349,6 +350,7 @@ for p = 1:length(PatientIDs)
                     
                     % Save the arrays to the .mat file
                     save(savePath, 'foldAccuracy', 'foldPrecision', 'foldRecall', 'foldF1Score','meanAccuracy','meanPrecision','meanRecall','meanF1Score');
+                    save(savePathCSV, 'foldAccuracy', 'foldPrecision', 'foldRecall', 'foldF1Score','meanAccuracy','meanPrecision','meanRecall','meanF1Score')
         end
     end 
 end
