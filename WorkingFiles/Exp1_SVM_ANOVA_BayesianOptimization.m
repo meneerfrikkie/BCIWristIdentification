@@ -2,7 +2,7 @@ ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 PatientIDs = {'P1'};
-ChosenTableStrings = {'PLVTable', 'IPDTable', 'IPD_PLVTable'};
+ChosenTableStrings = {'PLVTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
         clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
@@ -64,9 +64,9 @@ for p = 1:length(PatientIDs)
         
         %Feature selection
         startingNumberofFeatures = 1; 
-        stepsize = 10; 
-        %totalNumberofFeatures = 10; 
-        totalNumberofFeatures = length(predictorNames); 
+        stepsize = 1; 
+        totalNumberofFeatures = 15; 
+        %totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
@@ -201,7 +201,7 @@ for p = 1:length(PatientIDs)
                     elseif (mean(foldAccuracy) == highestAccuracy)
                                                %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
-                        HighestincludedPredictorNames = [HighestincludedPredictorNames;includedPredictorNames];
+                        HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
                         HighestAccuracyBestParams = [HighestAccuracyBestParams;(bestParams)];
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
@@ -279,7 +279,7 @@ for p = 1:length(PatientIDs)
                     
                     % Save the arrays to the .mat file
                     save(fullFilePath, 'storedPredictorNames');
-                    %writecell(storedPredictorNames, fullFilePathCSV);
+                    writecell(storedPredictorNames, fullFilePathCSV);
 
 
                     % Define the path for Anova Feature Selection folder
