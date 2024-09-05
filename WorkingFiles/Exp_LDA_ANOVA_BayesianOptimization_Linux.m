@@ -1,5 +1,6 @@
 %% Experiment Name and Patient specification
 ExperimentName = "Exp_LDA_ANOVA_BayesianOptimization_Linux";
+rng(1); 
 
 %Variables that vary per patient allowing quick interchanging
 PatientID = "P2";
@@ -105,9 +106,9 @@ isCategoricalPredictor = [false, false, false, false, false, false, false, false
 
 %Feature selection
 startingNumberofFeatures = 1; 
-stepsize = 1; 
-totalNumberofFeatures = 100; 
-% totalNumberofFeatures = length(predictorNames); 
+stepsize = 20; 
+% totalNumberofFeatures = 100; 
+totalNumberofFeatures = length(predictorNames); 
 
 predictors = ChosenTable(:, predictorNames);
 response = ChosenTable.Class;
@@ -140,6 +141,9 @@ end
 accuracies = [];
 numberofFeatures = []; 
 
+numFolds = 10; % Number of folds for cross-validation
+cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
+
 for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
     includedPredictorNames = predictors.Properties.VariableNames(featureIndex(1:i));
     iterationspredictors = predictors(:,includedPredictorNames);
@@ -153,7 +157,9 @@ for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
         'Delta', params.Delta, ...
         'Gamma', params.Gamma, ...
         'CrossVal', 'on', ...
+        'CVPartition', cvPartition, ... 
         'KFold', 10);
+
     
     % Define the optimization variables
     optimVars = [
@@ -176,14 +182,9 @@ for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
     % Extract the best hyperparameters
     bestParams = bestPoint(results);
 
-    numFolds = 10; % Number of folds for cross-validation
-    rng(1); % Fixed seed for consistent results
-    
     % Use the full combined table for cross-validation
     xtrain = iterationspredictors;
     ytrain = response;
-    cvPartition = cvpartition(ytrain, 'KFold', numFolds, 'Stratify', true);
-    
     
     foldAccuracy = zeros(numFolds, 1);
     
@@ -280,6 +281,7 @@ save(fullFilePath, 'storedPredictorNames');
         'Delta', params.Delta, ...
         'Gamma', params.Gamma, ...
         'CrossVal', 'on', ...
+        'CVPartition', cvPartition, ... 
         'KFold', 10);
     
     % Define the optimization variables
@@ -327,14 +329,10 @@ save(fullFilePath, 'bestParams');
 %% Stratified K-Fold Cross-Validation of Combined Table
 % Define the number of folds for cross-validation
 numFolds = 10; % Number of folds for cross-validation
-rng(1); % Fixed seed for consistent results
 
 % Use the full combined table for cross-validation
 xtrain = reducedPredictors;
 ytrain = response;
-
-% Create a stratified partition object
-cvPartition = cvpartition(ytrain, 'KFold', numFolds, 'Stratify', true);
 
 % Initialize arrays to hold metrics for each fold
 foldAccuracy = zeros(numFolds, 1);
