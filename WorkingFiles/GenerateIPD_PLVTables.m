@@ -20,7 +20,7 @@ for i = 1:length(PatientIDs)
         % Construct the file path using sprintf
         data = load(sprintf('..\\OwnData\\%sRH\\MatlabGeneratedData\\%sRH_Data_MultipleCH_ERDS.mat', PatientID, PatientID));
         
-    elseif ismac
+    elseif ismac || isunix
         % For MacOs
         % Construct the file path using sprintf
         data = load(sprintf('../OwnData/%sRH/MatlabGeneratedData/%sRH_Data_MultipleCH_ERDS.mat', PatientID, PatientID));
