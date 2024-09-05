@@ -207,7 +207,7 @@ for p = 1:length(PatientIDs)
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
                         HighestincludedPredictorNames = [HighestincludedPredictorNames;includedPredictorNames];
 
-                        HighestAccuracyBestParams = [HighestAccuracyBestParams,bestParams];
+                        HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
                    
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
