@@ -1,8 +1,8 @@
 ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
-PatientIDs = {'P1'};
-ChosenTableStrings = {'PLVTable'};
+PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
+ChosenTableStrings = {'PLVTable','IPDTable','IPD_PLVTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
         clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
@@ -65,8 +65,8 @@ for p = 1:length(PatientIDs)
         %Feature selection
         startingNumberofFeatures = 1; 
         stepsize = 1; 
-        totalNumberofFeatures = 15; 
-        %totalNumberofFeatures = length(predictorNames); 
+        %totalNumberofFeatures = 100; 
+        totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
@@ -186,9 +186,9 @@ for p = 1:length(PatientIDs)
                 
                 accuracies = [accuracies, mean(foldAccuracy)];
 
-                if mean(foldAccuracy) >= highestAccuracy
+                if (floor(mean(foldAccuracy) * 10000) / 10000) >= (floor(highestAccuracy * 10000) / 10000)
 
-                    if (mean(foldAccuracy) > highestAccuracy)
+                    if (floor(mean(foldAccuracy) * 10000) / 10000) > (floor(highestAccuracy * 10000) / 10000)
                         highestAccuracy = mean(foldAccuracy);
                         %Reset the varaibles for the new highest accuracy
                         highestAccuraciesNumberFeatures = i;
@@ -198,15 +198,15 @@ for p = 1:length(PatientIDs)
                         HighestfoldPrecisions = foldPrecision';
                         HighestfoldRecalls = foldRecall';
                         HighestfoldF1Scores = foldF1Score';
-                    elseif (mean(foldAccuracy) == highestAccuracy)
-                                               %Assing with the new highest stuff 
+                    elseif (floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000)
+                        %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
                         HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
-                        HighestAccuracyBestParams = [HighestAccuracyBestParams;(bestParams)];
+                        HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
                         HighestfoldRecalls = [HighestfoldRecalls,foldRecall']; 
-                        HighestfoldF1Scores = [HighestfoldF1Scores,foldF1Score']; 
+                        HighestfoldF1Scores = [HighestfoldF1Scores,foldF1Score'];
 
                     end
                     disp(['Average Cross-Validation Accuracy For ', num2str(i),': ', num2str(mean(foldAccuracy) * 100), '%']);
