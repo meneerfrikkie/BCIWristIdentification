@@ -1,8 +1,9 @@
-ExperimentName = "Exp2_SVM_ANOVA_BayesianOptimization";
+ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 %PatientIDs = {'P3','P4','P5','P6','P7'};
 %PatientIDs = {'P1','P2','P3','P4','P5','P6','P7'};
+PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
 ChosenTableStrings = {'PLVTable','IPDTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
