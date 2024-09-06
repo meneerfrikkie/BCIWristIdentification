@@ -1,6 +1,6 @@
-ExperimentName = 'Exp2_SVM_ANOVA_BayesianOptimization';
-PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
-ChosenTableStrings = {'PLVTable'};
+function dataTable = CombineExperimentResultsHyperparameters(ExperimentName,PatientIDs,ChosenTableString)
+
+
 
 %Defining required variables 
 TablePatientIds = {};
@@ -30,7 +30,7 @@ for p = 1:length(PatientIDs)
         
      %Feature Selection
         % File pattern for where the .mat is for the selected Features
-        TablePathForAnovaFeatureSelection = fullfile(fullfile(folderPath,'AnovaFeatureSelection'),'PLVTable');
+        TablePathForAnovaFeatureSelection = fullfile(fullfile(folderPath,'AnovaFeatureSelection'),ChosenTableString);
         filePatternSelectedFeatures = fullfile(TablePathForAnovaFeatureSelection, 'SelectedFeatures_*.mat');
 
         % Get a list of all files matching the pattern in the specified folder
@@ -55,7 +55,7 @@ for p = 1:length(PatientIDs)
         end
 
      %Hyperparameter tuning 
-            TablePathForHyperparameterTuning = fullfile(fullfile(folderPath,'HyperParameterTuning'),'PLVTable');
+            TablePathForHyperparameterTuning = fullfile(fullfile(folderPath,'HyperParameterTuning'),ChosenTableString);
             filePatternHyperparameterTuning = fullfile(TablePathForHyperparameterTuning, sprintf('%s_TunedParameters_*.mat','PLVTable'));
     
             % Get a list of all files matching the pattern in the specified folder
@@ -75,7 +75,7 @@ for p = 1:length(PatientIDs)
 
      %StratifiedCross-Validation
         % File pattern for where the .mat is for the selected Features
-        TablePathForCrossValidation = fullfile(fullfile(folderPath,'Stratified_K-Fold_CrossValidation'),'PLVTable');
+        TablePathForCrossValidation = fullfile(fullfile(folderPath,'Stratified_K-Fold_CrossValidation'),ChosenTableString);
         filePatternCrossValidation = fullfile(TablePathForCrossValidation, sprintf('%s_EvaluationMetrics_*.mat','PLVTable'));
 
         % Get a list of all files matching the pattern in the specified folder
