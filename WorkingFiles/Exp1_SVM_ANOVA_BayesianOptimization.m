@@ -1,8 +1,9 @@
-ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization";
+ExperimentName = "Exp2_SVM_ANOVA_BayesianOptimization";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
-PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
-ChosenTableStrings = {'PLVTable','IPDTable','IPD_PLVTable'};
+%PatientIDs = {'P3','P4','P5','P6','P7'};
+%PatientIDs = {'P1','P2','P3','P4','P5','P6','P7'};
+ChosenTableStrings = {'PLVTable','IPDTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
         clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
@@ -99,7 +100,7 @@ for p = 1:length(PatientIDs)
         accuracies = [];
         numberofFeatures = []; 
         highestAccuraciesNumberFeatures = [];
-        HighestincludedPredictorNames = [];
+        HighestincludedPredictorNames = {};
 
         HighestAccuracyBestParam = [];
                    
@@ -185,14 +186,16 @@ for p = 1:length(PatientIDs)
             end
                 
                 accuracies = [accuracies, mean(foldAccuracy)];
-
+                disp((floor(mean(foldAccuracy) * 10000) / 10000) >= (floor(highestAccuracy * 10000) / 10000));
+                disp((floor(mean(foldAccuracy) * 10000) / 10000) > (floor(highestAccuracy * 10000) / 10000));
+                disp((floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000));
+                disp(size(HighestincludedPredictorNames));
                 if (floor(mean(foldAccuracy) * 10000) / 10000) >= (floor(highestAccuracy * 10000) / 10000)
-
                     if (floor(mean(foldAccuracy) * 10000) / 10000) > (floor(highestAccuracy * 10000) / 10000)
                         highestAccuracy = mean(foldAccuracy);
                         %Reset the varaibles for the new highest accuracy
                         highestAccuraciesNumberFeatures = i;
-                        HighestincludedPredictorNames = includedPredictorNames;
+                        HighestincludedPredictorNames={ includedPredictorNames};
                         HighestAccuracyBestParams = bestParams;
                         HighestfoldAccuracies = foldAccuracy;
                         HighestfoldPrecisions = foldPrecision';
@@ -201,7 +204,7 @@ for p = 1:length(PatientIDs)
                     elseif (floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000)
                         %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
-                        HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
+                        HighestincludedPredictorNames(end+1) ={ includedPredictorNames};
                         HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
@@ -223,7 +226,7 @@ for p = 1:length(PatientIDs)
         title(sprintf('Accuracy vs Number of Features For Patient %s',PatientID));
         grid on;
         
-        
+         
         %Required to store the accuracies and the number of features for the
         %feature selection stage. 
         
@@ -266,8 +269,13 @@ for p = 1:length(PatientIDs)
         saveas(gcf, fullPlotPath);
         saveas(gcf, fullPlotPathPNG);
 
+
         for f = 1:length(highestAccuraciesNumberFeatures)
-                    storedPredictorNames = HighestincludedPredictorNames(f,:);
+                    storedPredictorNames = HighestincludedPredictorNames(1,f);
+                    
+                    % Write the data to a CSV file
+                    %writecell(dataToWrite, fullFilePathCSV);
+
 
                     % Construct the filename using the specified format
                     fileName = sprintf('SelectedFeatures_%d.mat',highestAccuraciesNumberFeatures(f));
@@ -279,7 +287,6 @@ for p = 1:length(PatientIDs)
                     
                     % Save the arrays to the .mat file
                     save(fullFilePath, 'storedPredictorNames');
-                    writecell(storedPredictorNames, fullFilePathCSV);
 
 
                     % Define the path for Anova Feature Selection folder
