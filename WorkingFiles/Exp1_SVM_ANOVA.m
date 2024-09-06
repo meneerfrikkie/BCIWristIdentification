@@ -1,8 +1,8 @@
 ExperimentName = "Exp1_SVM_ANOVA";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
-PatientIDs = {'P2'};
-ChosenTableStrings = {'PLVTable', 'IPDTable', 'IPD_PLVTable'};
+PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
+ChosenTableStrings = {'PLVTable','IPDTable','IPD_PLVTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
         clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
@@ -64,8 +64,8 @@ for p = 1:length(PatientIDs)
         
         %Feature selection
         startingNumberofFeatures = 1; 
-        stepsize = 20; 
-        %totalNumberofFeatures = 1; 
+        stepsize = 1; 
+        %totalNumberofFeatures = 100; 
         totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
@@ -98,6 +98,16 @@ for p = 1:length(PatientIDs)
         %Generating the plot to determine the best number of features
         accuracies = [];
         numberofFeatures = []; 
+        highestAccuraciesNumberFeatures = [];
+        HighestincludedPredictorNames = [];
+
+        HighestAccuracyBestParam = [];
+                   
+        HighestfoldAccuracies = [];
+        HighestfoldPrecisions = []; 
+        HighestfoldRecalls = []; 
+        HighestfoldF1Scores = []; 
+          
         
         numFolds = 10; % Number of folds for cross-validation
         cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
@@ -127,8 +137,8 @@ for p = 1:length(PatientIDs)
                 YtestFold = ytrain(testIndices);
             
                 SVMModel = fitcsvm(XtrainFold, YtrainFold, ...
-                    'KernelFunction', 'rbf', ...
-                    'Standardize', true);
+                        'KernelFunction', 'rbf', ...
+                        'Standardize', true);
             
                 YtestPred = predict(SVMModel, XtestFold);
             
@@ -144,58 +154,31 @@ for p = 1:length(PatientIDs)
                 
                 accuracies = [accuracies, mean(foldAccuracy)];
 
-                if mean(foldAccuracy) >= highestAccuracy
-                    highestAccuracy = mean(foldAccuracy);
+                if (floor(mean(foldAccuracy) * 10000) / 10000) >= (floor(highestAccuracy * 10000) / 10000)
+
+                    if (floor(mean(foldAccuracy) * 10000) / 10000) > (floor(highestAccuracy * 10000) / 10000)
+                        highestAccuracy = mean(foldAccuracy);
+                        %Reset the varaibles for the new highest accuracy
+                        highestAccuraciesNumberFeatures = i;
+                        HighestincludedPredictorNames = includedPredictorNames;
+                        HighestfoldAccuracies = foldAccuracy;
+                        HighestfoldPrecisions = foldPrecision';
+                        HighestfoldRecalls = foldRecall';
+                        HighestfoldF1Scores = foldF1Score';
+                    elseif (floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000)
+                        %Assing with the new highest stuff 
+                        highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
+                        HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
+                        HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
+                        HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
+                        HighestfoldRecalls = [HighestfoldRecalls,foldRecall']; 
+                        HighestfoldF1Scores = [HighestfoldF1Scores,foldF1Score'];
+
+                    end
                     disp(['Average Cross-Validation Accuracy For ', num2str(i),': ', num2str(mean(foldAccuracy) * 100), '%']);
                     disp(['Average Cross-Validation Precision ', num2str(i),': ', num2str(mean(foldPrecision) * 100), '%']);
                     disp(['Average Cross-Validation Recall: ', num2str(i),': ', num2str(mean(foldRecall) * 100), '%']);
                     disp(['Average Cross-Validation F1-Score: ', num2str(i),': ', num2str(mean(foldF1Score) * 100), '%']);
-
-                    
-                    anovaFolderPath = fullfile(folderPath, 'AnovaFeatureSelection');
-
-                    anovaFolderPath = fullfile(anovaFolderPath,ChosenTableString);
-                        
-                    % Check if the folder exists, if not, create it
-                    if ~exist(anovaFolderPath, 'dir')
-                        mkdir(anovaFolderPath);
-                    end
-                    
-                    storedPredictorNames = includedPredictorNames';
-
-                    % Construct the filename using the specified format
-                    fileName = sprintf('SelectedFeatures_%d.mat',i);
-                    
-                    % Full path to save the .mat file in the AnovaFeatureSelection folder
-                    fullFilePath = fullfile(anovaFolderPath, fileName);
-                    
-                    % Save the arrays to the .mat file
-                    save(fullFilePath, 'storedPredictorNames');
-                    
-                    
-                    %Store the results of the stratified k-fold cross-validation 
-                    stratifiedCrossValidationPath = fullfile(folderPath, 'Stratified_K-Fold_CrossValidation');
-                    
-                    stratifiedCrossValidationPath = fullfile(stratifiedCrossValidationPath,ChosenTableString);
-                    
-                    % Create a filename based on the feature selection parameters
-                    filename = sprintf('%s_EvaluationMetrics_%d.mat',ChosenTableString,i);
-                    
-                    % Specify the path where you want to save the file
-                    savePath = fullfile(stratifiedCrossValidationPath, filename);
-                    
-                    % Check if the folder exists, if not, create it
-                    if ~exist(stratifiedCrossValidationPath, 'dir')
-                        mkdir(stratifiedCrossValidationPath);
-                    end
-                    
-                    meanAccuracy = mean(foldAccuracy);
-                    meanPrecision = mean(foldPrecision);
-                    meanRecall = mean(foldRecall);
-                    meanF1Score = mean(foldF1Score); 
-                    
-                    % Save the arrays to the .mat file
-                    save(savePath, 'foldAccuracy', 'foldPrecision', 'foldRecall', 'foldF1Score','meanAccuracy','meanPrecision','meanRecall','meanF1Score');
                 end 
         end 
         % Create the plot
@@ -212,10 +195,24 @@ for p = 1:length(PatientIDs)
         
         % Construct the filename using the specified format
         fileName = sprintf('%s_%d_%d_%d.mat', ...
-                           ChosenTableString,startingNumberofFeatures, stepsize, totalNumberofFeatures);
+                          ChosenTableString,startingNumberofFeatures, stepsize, totalNumberofFeatures);
+        csvFileName = sprintf('%s_%d_%d_%d.csv', ...
+                          ChosenTableString,startingNumberofFeatures, stepsize, totalNumberofFeatures);
+
+        anovaFolderPath = fullfile(folderPath, 'AnovaFeatureSelection');
+
+        anovaFolderPath = fullfile(anovaFolderPath,ChosenTableString);
+                        
+        % Check if the folder exists, if not, create it
+         if ~exist(anovaFolderPath, 'dir')
+            mkdir(anovaFolderPath);
+         end
         
         % Full path to save the .mat file in the AnovaFeatureSelection folder
         fullFilePath = fullfile(anovaFolderPath, fileName);
+
+        fullFilePathCSV = fullfile(anovaFolderPath, csvFileName);
+        accuracyAndFeatures = table(accuracies, numberofFeatures, 'VariableNames', {'Accuracy', 'NumberOfFeatures'});
         
         % Construct the filename using the specified format
         plotFileName = sprintf('%s_%d_%d_%d.fig', ...
@@ -228,10 +225,71 @@ for p = 1:length(PatientIDs)
         fullPlotPathPNG = fullfile(anovaFolderPath, plotFileNamePNG);
         % Save the accuracies and number of features to the .mat file
         save(fullFilePath, 'accuracies', 'numberofFeatures');
+        save(fullFilePathCSV,'accuracies','numberofFeatures');
+        writetable(accuracyAndFeatures, fullFilePathCSV);
         
         % Save the plot with the constructed filename
         saveas(gcf, fullPlotPath);
         saveas(gcf, fullPlotPathPNG);
-        
+
+        for f = 1:length(highestAccuraciesNumberFeatures)
+                    storedPredictorNames = HighestincludedPredictorNames(f,:);
+
+                    % Construct the filename using the specified format
+                    fileName = sprintf('SelectedFeatures_%d.mat',highestAccuraciesNumberFeatures(f));
+                    csvFilename = sprintf('SelectedFeatures_%d.csv',highestAccuraciesNumberFeatures(f));
+                    
+                    % Full path to save the .mat file in the AnovaFeatureSelection folder
+                    fullFilePath = fullfile(anovaFolderPath, fileName);
+                    fullFilePathCSV = fullfile(anovaFolderPath,csvFilename);
+                    
+                    % Save the arrays to the .mat file
+                    save(fullFilePath, 'storedPredictorNames');
+                    % writecell(storedPredictorNames, fullFilePathCSV)
+                    
+                    
+                    %Store the results of the stratified k-fold cross-validation 
+                    stratifiedCrossValidationPath = fullfile(folderPath, 'Stratified_K-Fold_CrossValidation');
+                    
+                    stratifiedCrossValidationPath = fullfile(stratifiedCrossValidationPath,ChosenTableString);
+                    
+                    % Create a filename based on the feature selection parameters
+                    filename = sprintf('%s_EvaluationMetrics_%d.mat',ChosenTableString,highestAccuraciesNumberFeatures(f));
+                    csvFilename = sprintf('%s_EvaluationMetrics_%d.csv',ChosenTableString,highestAccuraciesNumberFeatures(f));
+                    
+                    % Specify the path where you want to save the file
+                    savePath = fullfile(stratifiedCrossValidationPath, filename);
+                    savePathCSV = fullfile(stratifiedCrossValidationPath,csvFilename); 
+                    
+                    % Check if the folder exists, if not, create it
+                    if ~exist(stratifiedCrossValidationPath, 'dir')
+                        mkdir(stratifiedCrossValidationPath);
+                    end
+                    
+                    foldAccuracy = HighestfoldAccuracies(:,f);
+                    foldPrecision = HighestfoldPrecisions(:,f);
+                    foldRecall = HighestfoldRecalls(:,f);
+                    foldF1Score = HighestfoldF1Scores(:,f);
+                    meanAccuracy = mean(HighestfoldAccuracies(:,f));
+                    meanPrecision = mean(HighestfoldPrecisions(:,f));
+                    meanRecall = mean(HighestfoldRecalls(:,f));
+                    meanF1Score = mean(HighestfoldF1Scores(:,f)); 
+                    
+                    % Save the arrays to the .mat file
+                    save(savePath, 'foldAccuracy', 'foldPrecision', 'foldRecall', 'foldF1Score','meanAccuracy','meanPrecision','meanRecall','meanF1Score');
+                    % Combine the metrics into a table
+                    evaluationMetricsTable = table(foldAccuracy, foldPrecision, foldRecall, foldF1Score, ...
+                                                   'VariableNames', {'Accuracy', 'Precision', 'Recall', 'F1Score'});
+                    
+                    % Append mean values as a new row if needed
+                    meanRow = table(meanAccuracy, meanPrecision, meanRecall, meanF1Score, ...
+                                    'VariableNames', {'Accuracy', 'Precision', 'Recall', 'F1Score'});
+                    
+                    % Optionally add the mean row to the table for completeness
+                    evaluationMetricsTable = [evaluationMetricsTable; meanRow];
+                    
+                    % Save the table to the CSV file
+                    writetable(evaluationMetricsTable, savePathCSV);
+        end
     end 
 end
