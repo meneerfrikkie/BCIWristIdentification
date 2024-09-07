@@ -131,7 +131,46 @@ dataTable = table(TablePatientIds, ...
 
 
 
+        if ispc
+                % For Windows
+                folderPath = fullfile(sprintf('..\\OwnResults\\ExperimentsResults\\%s',ExperimentName));
 
+                % Define the file path and name within the new folder
+                % Get the current date as a string in the format YYYYMMDD
+                dateStr = datestr(now, 'yyyymmdd');
+                
+                % Combine the filename with the date
+                fileName = sprintf('%s_ExperimentResults_%s.mat',ChosenTableString ,dateStr);
 
+                
+                % Check if the folder exists; if not, create it
+                if ~exist(folderPath, 'dir')
+                    mkdir(folderPath);
+                end
+            
+                % Write the table
+                filePath = fullfile(folderPath, fileName);
+                save(filePath, 'dataTable');
+            elseif ismac || isunix 
+                folderPath = fullfile(sprintf('../OwnResults/ExperimentsResults/%s',ExperimentName));
+
+                 % Define the file path and name within the new folder
+                % Get the current date as a string in the format YYYYMMDD
+                dateStr = datestr(now, 'yyyymmdd');
+                
+                % Combine the filename with the date
+                fileName = sprintf('%s_ExperimentResults_%s.mat',ChosenTableString ,dateStr);
+
+                
+                % Check if the folder exists; if not, create it
+                if ~exist(folderPath, 'dir')
+                    mkdir(folderPath);
+                end
+            
+                % Write the table
+                filePath = fullfile(folderPath, fileName);
+                save(filePath, 'dataTable');
+        end
+end
 
 
