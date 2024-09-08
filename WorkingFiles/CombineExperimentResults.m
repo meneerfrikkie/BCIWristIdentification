@@ -1,5 +1,6 @@
 function dataTable = CombineExperimentResults(ExperimentName,PatientIDs,ChosenTableString)
 
+
     %Defining required variables 
     TablePatientIds = {};
     NumberOfSelectedFeatures = []; %Row vector 
@@ -44,7 +45,7 @@ function dataTable = CombineExperimentResults(ExperimentName,PatientIDs,ChosenTa
                 numberStr = regexp(fileName, '\d+', 'match');  % Extracts the number as a string
                 numberOfFeatures = str2double(numberStr{1});   % Convert the string to a number
                 NumberOfSelectedFeatures(end+1,1) = numberOfFeatures;
-                SelectedFeatureNames{end+1,1} = fileDataFeatureSelection.storedPredictorNames(1);
+                SelectedFeatureNames{end+1,1} = fileDataFeatureSelection.storedPredictorNames{1};
     
                 %Need to fill column of PatientIDs with required number of
                 %repeated patientIDs to cover all the selected features

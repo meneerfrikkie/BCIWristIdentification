@@ -2,6 +2,7 @@ function dataTable = CombineExperimentResultsHyperparameters(ExperimentName,Pati
 
 
 
+
 %Defining required variables 
 TablePatientIds = {};
 NumberOfSelectedFeatures = []; %Row vector 
@@ -47,7 +48,7 @@ for p = 1:length(PatientIDs)
             numberStr = regexp(fileName, '\d+', 'match');  % Extracts the number as a string
             numberOfFeatures = str2double(numberStr{1});   % Convert the string to a number
             NumberOfSelectedFeatures(end+1,1) = numberOfFeatures;
-            SelectedFeatureNames{end+1,1} = fileDataFeatureSelection.storedPredictorNames(1);
+            SelectedFeatureNames{end+1,1} = fileDataFeatureSelection.storedPredictorNames{1};
 
             %Need to fill column of PatientIDs with required number of
             %repeated patientIDs to cover all the selected features
@@ -56,7 +57,7 @@ for p = 1:length(PatientIDs)
 
      %Hyperparameter tuning 
             TablePathForHyperparameterTuning = fullfile(fullfile(folderPath,'HyperParameterTuning'),ChosenTableString);
-            filePatternHyperparameterTuning = fullfile(TablePathForHyperparameterTuning, sprintf('%s_TunedParameters_*.mat','PLVTable'));
+            filePatternHyperparameterTuning = fullfile(TablePathForHyperparameterTuning, sprintf('%s_TunedParameters_*.mat',ChosenTableString));
     
             % Get a list of all files matching the pattern in the specified folder
             matFiles = dir(filePatternHyperparameterTuning);   
@@ -76,7 +77,7 @@ for p = 1:length(PatientIDs)
      %StratifiedCross-Validation
         % File pattern for where the .mat is for the selected Features
         TablePathForCrossValidation = fullfile(fullfile(folderPath,'Stratified_K-Fold_CrossValidation'),ChosenTableString);
-        filePatternCrossValidation = fullfile(TablePathForCrossValidation, sprintf('%s_EvaluationMetrics_*.mat','PLVTable'));
+        filePatternCrossValidation = fullfile(TablePathForCrossValidation, sprintf('%s_EvaluationMetrics_*.mat',ChosenTableString));
 
         % Get a list of all files matching the pattern in the specified folder
         matFiles = dir(filePatternCrossValidation);   
