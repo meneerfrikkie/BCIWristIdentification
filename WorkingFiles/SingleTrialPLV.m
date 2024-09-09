@@ -27,6 +27,23 @@ function PLV = SingleTrialPLV(data, CH_selection, CH_pairs, t1, t2, times)
 
   end 
 
+
+    modified_CH_pairs = cell(size(CH_pairs));
+    % Loop through each element in CH_pairs
+    for i = 1:length(CH_pairs)
+        % Get the current pair
+        pair = CH_pairs{i};
+        
+        % Format the modified pair
+        modified_pair = sprintf('%s-%d-%d', pair, t1, t2);
+        
+        % Store the modified pair in the new cell array
+        modified_CH_pairs{i} = modified_pair;
+    end
+    
+    % Replace the original CH_pairs with the modified cell array
+    CH_pairs = modified_CH_pairs;
+
     % Create the table
   PLV = array2table(all_plv_values, 'VariableNames', CH_pairs);
 

@@ -1,4 +1,4 @@
-ExperimentName = "Exp1_SVM_ANOVA";
+ExperimentName = "Exp3_SVM_ANOVA";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
@@ -59,14 +59,12 @@ for p = 1:length(PatientIDs)
         
         columnNames = ChosenTable.Properties.VariableNames;
         predictorNames = columnNames(1,1:end-1);
-        isCategoricalPredictor = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
-        
         
         %Feature selection
         startingNumberofFeatures = 1; 
         stepsize = 1; 
-        %totalNumberofFeatures = 100; 
-        totalNumberofFeatures = length(predictorNames); 
+        totalNumberofFeatures = 100; 
+        %totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
@@ -76,11 +74,8 @@ for p = 1:length(PatientIDs)
         newPredictorMatrix = zeros(size(predictorMatrix));
         
         for i = 1:size(predictorMatrix, 2)
-            if isCategoricalPredictor(i)
-                newPredictorMatrix(:,i) = grp2idx(predictorMatrix{:,i});
-            else
                 newPredictorMatrix(:,i) = predictorMatrix{:,i};
-            end
+
         end
         predictorMatrix = newPredictorMatrix;
         responseVector = grp2idx(response);
@@ -99,7 +94,7 @@ for p = 1:length(PatientIDs)
         accuracies = [];
         numberofFeatures = []; 
         highestAccuraciesNumberFeatures = [];
-        HighestincludedPredictorNames = [];
+        HighestincludedPredictorNames = {};
 
         HighestAccuracyBestParam = [];
                    
@@ -160,7 +155,7 @@ for p = 1:length(PatientIDs)
                         highestAccuracy = mean(foldAccuracy);
                         %Reset the varaibles for the new highest accuracy
                         highestAccuraciesNumberFeatures = i;
-                        HighestincludedPredictorNames = includedPredictorNames;
+                        HighestincludedPredictorNames = {includedPredictorNames};
                         HighestfoldAccuracies = foldAccuracy;
                         HighestfoldPrecisions = foldPrecision';
                         HighestfoldRecalls = foldRecall';
@@ -168,7 +163,7 @@ for p = 1:length(PatientIDs)
                     elseif (floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000)
                         %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
-                        HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
+                        HighestincludedPredictorNames(end+1) ={ includedPredictorNames};
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
                         HighestfoldRecalls = [HighestfoldRecalls,foldRecall']; 
@@ -233,7 +228,7 @@ for p = 1:length(PatientIDs)
         saveas(gcf, fullPlotPathPNG);
 
         for f = 1:length(highestAccuraciesNumberFeatures)
-                    storedPredictorNames = HighestincludedPredictorNames(f,:);
+                    storedPredictorNames = HighestincludedPredictorNames(1,f);
 
                     % Construct the filename using the specified format
                     fileName = sprintf('SelectedFeatures_%d.mat',highestAccuraciesNumberFeatures(f));

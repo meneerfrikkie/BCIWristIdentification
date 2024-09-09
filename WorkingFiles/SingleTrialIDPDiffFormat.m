@@ -11,12 +11,26 @@ function IDP = SingleTrialIDPDiffFormat(data, CH_selection, CH_pairs, t1, t2, ti
     % Initialize variables
     numPairs = length(CH_pairs);
     varNames = cell(1, numPairs * 3); % To store variable names for the table
+    modified_CH_pairs = cell(size(CH_pairs));
+
+    % Loop through each element in CH_pairs
+    for i = 1:length(CH_pairs)
+        % Get the current pair
+        pair = CH_pairs{i};
+        
+        % Format the modified pair
+        modified_pair = sprintf('%s-%d-%d', pair, t1, t2);
+        
+        % Store the modified pair in the new cell array
+        modified_CH_pairs{i} = modified_pair;
+    end
+
 
     % Create variable names for each channel pair with '-mean', '-std', '-variance'
     for i = 1:numPairs
-        varNames{3*i-2} = [CH_pairs{i} '-mean'];
-        varNames{3*i-1} = [CH_pairs{i} '-std'];
-        varNames{3*i}   = [CH_pairs{i} '-variance'];
+        varNames{3*i-2} = [modified_CH_pairs{i} '-mean'];
+        varNames{3*i-1} = [modified_CH_pairs{i} '-std'];
+        varNames{3*i}   = [modified_CH_pairs{i} '-variance'];
     end
 
     % Initialize the table with a single row for all the channel pair statistics

@@ -63,38 +63,22 @@ for p = 1:length(PatientIDs)
         predictorNames = columnNames(1,1:end-1);
        
         
-        %Feature selection
+                %Feature selection
         startingNumberofFeatures = 1; 
         stepsize = 1; 
-        totalNumberofFeatures = 200; 
-        %totalNumberofFeatures = length(predictorNames); 
+        %totalNumberofFeatures = 100; 
+        totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
         
-        predictors = standardizeMissing(predictors, {Inf, -Inf});
-        predictorMatrix = normalize(predictors);
-        newPredictorMatrix = zeros(size(predictorMatrix));
+        %Calc BD distance for all features
+        X = table2array(predictors); 
+        y = logical(response); 
         
-        for i = 1:size(predictorMatrix, 2)
+        Z = bhattacharyyaDistance(X,y);
 
-                newPredictorMatrix(:,i) = predictorMatrix{:,i};
-          
-
-
-
-        end
-        predictorMatrix = newPredictorMatrix;
-        responseVector = grp2idx(response);
-        
-        % Rank features using ANOVA algorithm
-        for i = 1:size(predictorMatrix, 2)
-            pValues(i) = anova1(...
-                predictorMatrix(:,i), ...
-                responseVector, ...
-                'off');
-        end
-        [~,featureIndex] = sort(-log(pValues), 'descend');
+        [~, sortedIndices] = sort(Z, 'descend');
         
         
         %Generating the plot to determine the best number of features
@@ -116,7 +100,7 @@ for p = 1:length(PatientIDs)
         highestAccuracy = 0; 
 
         for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
-            includedPredictorNames = predictors.Properties.VariableNames(featureIndex(1:i));
+            includedPredictorNames = predictors.Properties.VariableNames(sortedIndices(1:i));
             iterationspredictors = predictors(:,includedPredictorNames);
             numberofFeatures = [numberofFeatures, i]; 
         
