@@ -34,12 +34,18 @@ function AnalyseFeatures(matFilePath)
     currentDate = datestr(now, 'yyyymmdd'); % Get the current date
     newFileName = sprintf('%sTable_RankedOccuringFeatures_%s', prefix, currentDate);
 
+    % Define the directory path and create it if it does not exist
+    outputDir = fullfile(fileparts(matFilePath), 'SortedFeaturesRanked');
+    if ~exist(outputDir, 'dir')
+        mkdir(outputDir);
+    end
+
     % Save the table as a .mat file
-    matFilePath = fullfile(fileparts(matFilePath), [newFileName, '.mat']);
+    matFilePath = fullfile(outputDir, [newFileName, '.mat']);
     save(matFilePath, 'rankedFeaturesTable');
 
     % Save the table as a .csv file
-    csvFilePath = fullfile(fileparts(matFilePath), [newFileName, '.csv']);
+    csvFilePath = fullfile(outputDir, [newFileName, '.csv']);
     writetable(rankedFeaturesTable, csvFilePath);
 
     % Display paths to confirm saving
@@ -64,10 +70,10 @@ function AnalyseFeatures(matFilePath)
     grid on;
 
     % Storing of the Bar Graph Figure
-    figFilePath = fullfile(fileparts(matFilePath), [newFileName, '.fig']);
+    figFilePath = fullfile(outputDir, [newFileName, '.fig']);
     savefig(figFilePath);
 
-    pngFilePath = fullfile(fileparts(matFilePath), [newFileName, '.png']);
+    pngFilePath = fullfile(outputDir, [newFileName, '.png']);
     saveas(gcf, pngFilePath);
 
     % Display paths to confirm saving
