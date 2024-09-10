@@ -1,3 +1,4 @@
+% File: AnalyseFeaturesPerExperiment
 % Select the folder containing the .mat files
 clc
 folderPath = uigetdir('', 'Select the Folder Containing .mat Files');
