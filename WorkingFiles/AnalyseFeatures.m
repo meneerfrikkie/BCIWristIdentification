@@ -7,7 +7,6 @@ function AnalyseFeatures(matFilePath)
 
     % Flatten the cell array to get a list of all selected features
     allFeatures = [selectedFeaturesCell{:}];
-    allFeatures = regexprep(allFeatures, '-5000-8000.*$', '');
 
     % Count the occurrences of each feature
     [uniqueFeatures, ~, idx] = unique(allFeatures);
