@@ -1,8 +1,8 @@
-ExperimentName = "Exp1_LDA_BD_ChannelPairs2";
+ExperimentName = "Exp1_LDA_BD_SlidingWindow_ChannelPair3";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
-ChosenTableStrings = {'PLVTable','IPDTable','IPD_PLVTable'};
+ChosenTableStrings = {'PLVTable','IPDTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
         clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
@@ -63,8 +63,8 @@ for p = 1:length(PatientIDs)
         %Feature selection
         startingNumberofFeatures = 1; 
         stepsize = 1; 
-        %totalNumberofFeatures = 100; 
-        totalNumberofFeatures = length(predictorNames); 
+        totalNumberofFeatures = 200; 
+        %totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;

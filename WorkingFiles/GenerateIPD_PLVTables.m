@@ -1,6 +1,6 @@
 function GenerateIPD_PLVTables(PatientIDs)
 
-PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
+%PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
 % Define the channel pairs to be analyzed
 % CH_pairs = {'FCz-FC3','FCz-C3','FCz-CP3','CPz-FC3','CPz-C3','CPz-CP3','FCC1h-C3','FCC2h-C3','CCP1h-C3','CCP2h-C3'};
 CH_pairs = GenerateAllChannelPairs();
@@ -40,54 +40,59 @@ for i = 1:length(PatientIDs)
 
     %No sliding window
     
-    %Generate IPD features for Writst Extension
-    IPDTable_WE = MultiTrialIDP(data_WE, CH_pairs, CH_selection, 5000, 8000, data.times, class_WE, PatientID);
+%     %Generate IPD features for Writst Extension
+%     IPDTable_WE = MultiTrialIDP(data_WE, CH_pairs, CH_selection, 5000, 8000, data.times, class_WE, PatientID);
+% 
+%     %Generate IPD Features for Wrist Flexion
+%     IPDTable_WF = MultiTrialIDP(data_WF, CH_pairs, CH_selection, 5000, 8000, data.times, class_WF, PatientID);
+%     
+%     %Generate PLV features for Wrist Extension (WE)
+%     PLVTable_WE = MultiTrialPLV(data_WE, CH_pairs, CH_selection, 5000, 8000, data.times, class_WE, PatientID);
+%     
+%     %Generate PLV features for Wrist Flexion (WF)
+%     PLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection, 5000, 8000, data.times, class_WF, PatientID);
 
-    %Generate IPD Features for Wrist Flexion
-    IPDTable_WF = MultiTrialIDP(data_WF, CH_pairs, CH_selection, 5000, 8000, data.times, class_WF, PatientID);
-    
-    %Generate PLV features for Wrist Extension (WE)
-    PLVTable_WE = MultiTrialPLV(data_WE, CH_pairs, CH_selection, 5000, 8000, data.times, class_WE, PatientID);
-    
-    %Generate PLV features for Wrist Flexion (WF)
-    PLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection, 5000, 8000, data.times, class_WF, PatientID);
-    
+t1 = 5000; 
+t2 = 7700; 
+
     % Multi-Trial Analysis for Wrist Extension (WE)
 % 
 %     % Sliding Window 
-%     for t = t1:0.1:t2
-%         if t == t1
-%      %   Generate IPD features for Writst Extension
-%         IPDTable_WE = MultiTrialIDP(data_WE, CH_pairs, CH_selection, t, t+0.3, data.times, class_WE, PatientID);
-%     
-%      %   Generate IPD Features for Wrist Flexion
-%         IPDTable_WF = MultiTrialIDP(data_WF, CH_pairs, CH_selection,  t, t+0.3, data.times, class_WF, PatientID);
-%         
-%       %  Generate PLV features for Wrist Extension (WE)
-%         PLVTable_WE = MultiTrialPLV(data_WE, CH_pairs, CH_selection,  t, t+0.3, data.times, class_WE, PatientID);
-%         
-%       %  Generate PLV features for Wrist Flexion (WF)
-%         PLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection,  t, t+0.3, data.times, class_WF, PatientID);
-%         else
-%       %  Generate IPD features for Writst Extension
-%         tempIPDTable_WE = MultiTrialIDP(data_WE, CH_pairs, CH_selection, t, t+0.3, data.times, class_WE, PatientID);
-%     
-%       %  Generate IPD Features for Wrist Flexion
-%         tempIPDTable_WF = MultiTrialIDP(data_WF, CH_pairs, CH_selection,  t, t+0.3, data.times, class_WF, PatientID);
-%         
-%       % Generate PLV features for Wrist Extension (WE)
-%         tempPLVTable_WE = MultiTrialPLV(data_WE, CH_pairs, CH_selection,  t, t+0.3, data.times, class_WE, PatientID);
-%         
-%        % Generate PLV features for Wrist Flexion (WF)
-%         tempPLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection,  t, t+0.3, data.times, class_WF, PatientID);
-% 
-%         IPDTable_WE = [IPDTable_WE(:,1:end-1),tempIPDTable_WE]; 
-%         IPDTable_WF = [IPDTable_WF(:,1:end-1),tempIPDTable_WF];
-% 
-%         PLVTable_WE = [PLVTable_WE(:,1:end-1),tempPLVTable_WE]; 
-%         PLVTable_WF = [PLVTable_WE(:,1:end-1),tempPLVTable_WF];
-%         end 
-%     end 
+    for t = t1:100:t2
+        disp(t)
+        disp(t==t1)
+        if t == t1
+     %   Generate IPD features for Writst Extension
+        IPDTable_WE = MultiTrialIDP(data_WE, CH_pairs, CH_selection, t, t+300, data.times, class_WE, PatientID);
+    
+     %   Generate IPD Features for Wrist Flexion
+        IPDTable_WF = MultiTrialIDP(data_WF, CH_pairs, CH_selection,  t, t+300, data.times, class_WF, PatientID);
+        
+      %  Generate PLV features for Wrist Extension (WE)
+        PLVTable_WE = MultiTrialPLV(data_WE, CH_pairs, CH_selection,  t, t+300, data.times, class_WE, PatientID);
+        
+      %  Generate PLV features for Wrist Flexion (WF)
+        PLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection,  t, t+300, data.times, class_WF, PatientID);
+        else
+      %  Generate IPD features for Writst Extension
+        tempIPDTable_WE = MultiTrialIDP(data_WE, CH_pairs, CH_selection, t, t+300, data.times, class_WE, PatientID);
+    
+      %  Generate IPD Features for Wrist Flexion
+        tempIPDTable_WF = MultiTrialIDP(data_WF, CH_pairs, CH_selection,  t, t+300, data.times, class_WF, PatientID);
+        
+      % Generate PLV features for Wrist Extension (WE)
+        tempPLVTable_WE = MultiTrialPLV(data_WE, CH_pairs, CH_selection,  t, t+300, data.times, class_WE, PatientID);
+        
+       % Generate PLV features for Wrist Flexion (WF)
+        tempPLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection,  t, t+300, data.times, class_WF, PatientID);
+
+        IPDTable_WE = [IPDTable_WE(:,1:end-1),tempIPDTable_WE]; 
+        IPDTable_WF = [IPDTable_WF(:,1:end-1),tempIPDTable_WF];
+
+        PLVTable_WE = [PLVTable_WE(:,1:end-1),tempPLVTable_WE]; 
+        PLVTable_WF = [PLVTable_WF(:,1:end-1),tempPLVTable_WF];
+        end 
+    end 
     
     
     % Combine IDP tables for WE and WF
