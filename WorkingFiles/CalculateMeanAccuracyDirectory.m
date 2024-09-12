@@ -50,10 +50,13 @@ for i = 1:numel(subFolders)
     end
 end
 
-% Display the final results table
-disp('Final Results Table:');
+% Sort the results table by 'OverallMeanAccuracy' in descending order (highest to lowest)
+resultsTable = sortrows(resultsTable, 'OverallMeanAccuracy', 'descend');
+
+% Display the final sorted results table
+disp('Final Sorted Results Table:');
 disp(resultsTable);
 
-% Storing of the results
+% Store the sorted results in .mat and .csv formats
 save(fullfile(mainFolderPath, 'ExperimentResultsSummary.mat'), 'resultsTable');
 writetable(resultsTable, fullfile(mainFolderPath, 'ExperimentResultsSummary.csv'));
