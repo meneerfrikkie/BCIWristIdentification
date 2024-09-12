@@ -2,27 +2,57 @@ function AnalyseFeatures(matFilePath)
     % Load the selected .mat file
     dataTable = load(matFilePath).dataTable;
 
-    % Extract the "Selected Feature Names" column
+    % Extract the "Selected Feature Names" and "PatientID" columns
     selectedFeaturesCell = dataTable{:,"Selected Feature Names"};
+    patientIDCell = dataTable{:,"PatientID"};
 
-    % Flatten the cell array to get a list of all selected features
-    allFeatures = [selectedFeaturesCell{:}];
-    % allFeatures = regexprep(allFeatures, '^([^-]+-[^-]+)-.*$', '$1');
-    % Uncomment above line if you want to remove the time stamps of the
-    % features
+    % Initialize a map to track features and their corresponding PatientIDs
+    featurePatientMap = containers.Map();
+
+    % Flatten the cell array and track PatientIDs for each feature
+    for i = 1:numel(selectedFeaturesCell)
+        features = selectedFeaturesCell{i}; % Get features for this patient
+        patientID = patientIDCell{i};       % Get the PatientID for this row
+
+        for j = 1:numel(features)
+            feature = features{j};
+            
+            if isKey(featurePatientMap, feature)
+                % Append the current PatientID if the feature already exists
+                featurePatientMap(feature) = [featurePatientMap(feature), patientID];
+            else
+                % Create a new entry with the current PatientID
+                featurePatientMap(feature) = {patientID};
+            end
+        end
+    end
+
+    % Convert the map keys and values to arrays
+    allFeatures = keys(featurePatientMap);
+    allPatientIDs = values(featurePatientMap);
 
     % Count the occurrences of each feature
-    [uniqueFeatures, ~, idx] = unique(allFeatures);
-    uniqueFeatures = uniqueFeatures';
-    featureCounts = accumarray(idx, 1);
+    featureCounts = cellfun(@numel, allPatientIDs);
 
     % Sort the features by count in descending order
     [sortedCounts, sortIdx] = sort(featureCounts, 'descend');
-    sortedFeatures = uniqueFeatures(sortIdx);
+    sortedFeatures = allFeatures(sortIdx);
+    sortedPatientIDs = allPatientIDs(sortIdx);
 
-    % Create a table to display the sorted features and their counts
-    rankedFeaturesTable = table(sortedFeatures, sortedCounts, ...
-        'VariableNames', {'FeatureName', 'Count'});
+    % Debugging: Check the lengths of the variables before creating the table
+    disp('Length of sortedFeatures:');
+    disp(size(sortedFeatures'));
+    disp('Length of sortedCounts:');
+    disp(size(sortedCounts'));
+    disp('Length of patientIDStrings:');
+    disp(size(sortedPatientIDs'));
+
+    disp(sortedFeatures')
+    disp(sortedCounts')
+    disp(sortedPatientIDs')
+    % Create a table to display the sorted features, counts, and PatientIDs
+    rankedFeaturesTable = table(sortedFeatures', sortedCounts', sortedPatientIDs', ...
+        'VariableNames', {'FeatureName', 'Count', 'PatientIDs'});
 
     % Display the sorted results
     disp('Feature Occurrences (Sorted):');
@@ -70,7 +100,7 @@ function AnalyseFeatures(matFilePath)
     % Add labels and title
     ylabel('Feature Name');
     xlabel('Count');
-    title('Ranked Occuring Features');
+    title('Ranked Occurring Features');
 
     % Adjusting the figure size for better readability
     set(gcf, 'Position', [100, 100, 1200, 600]);  % [left, bottom, width, height]
