@@ -27,15 +27,20 @@ function AnalyseFeatures(matFilePath)
     % Display the sorted results
     disp('Feature Occurrences (Sorted):');
     disp(rankedFeaturesTable);
+    
+    % Extract the experiment name (e.g., 'Exp1_LDA_ANOVA_ChannelPairs2_SlidingWindow_IPD') 
+    % from the original file name by capturing everything before '_ExperimentResults'
+    [fileDir, fileName, ~] = fileparts(matFilePath);
+    
+    % Extract the folder name from the file directory path
+    [~, folderName] = fileparts(fileDir);
 
-    % Extract the prefix (e.g., 'PLV', 'IPD_PLV') from the original file name
-    [~, fileName, ~] = fileparts(matFilePath);
-    prefix = regexp(fileName, '^[A-Z_]+(?=Table)', 'match', 'once'); % Capture everything before 'Table'
-
+    % Extract the prefix (e.g., 'IPD', 'PLV') from the original file name before 'Table'
+    prefix = regexp(fileName, '[A-Z_]+(?=Table)', 'match', 'once');
+    
     % Generate a new file name with the prefix
-    currentDate = datestr(now, 'yyyymmdd'); % Get the current date
-    newFileName = sprintf('%sTable_RankedOccuringFeatures_%s', prefix, currentDate);
-
+    newFileName = sprintf('%s_%s_RankedFeatures', folderName, prefix);
+    
     % Define the directory path and create it if it does not exist
     outputDir = fullfile(fileparts(matFilePath), 'SortedFeaturesRanked');
     if ~exist(outputDir, 'dir')
@@ -55,7 +60,7 @@ function AnalyseFeatures(matFilePath)
     fprintf('Table saved as .csv file: %s\n', csvFilePath);
 
     % Plotting of a Bar Graph (Horizontal)
-    figure;
+    figure('Visible', 'off');  % Create the figure, but do not display it
     barh(flip(sortedCounts), 'FaceColor', [0.2 0.4 0.6]);
 
     % Set the y-axis labels to feature names
