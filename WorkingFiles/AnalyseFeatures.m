@@ -1,76 +1,61 @@
+
 function AnalyseFeatures(matFilePath)
     % Load the selected .mat file
     dataTable = load(matFilePath).dataTable;
 
-    % Extract the "Selected Feature Names" and "PatientID" columns
+        sizeTable = size(dataTable,1);
+    i = 1; 
+    %Loop and remove repeat patientIDs 
+    while i < sizeTable 
+        disp(i)
+        if (strcmp(dataTable{i,1}, dataTable{i+1,1}))
+           dataTable(i+1,:) = []; 
+           sizeTable = sizeTable -1; 
+           if i == 1
+               i = 1; 
+           else
+                i = i-1;
+           end 
+           disp('deleted')
+        else 
+            i = i+1;
+        end 
+    end 
+
+    % Extract the "Selected Feature Names" column
     selectedFeaturesCell = dataTable{:,"Selected Feature Names"};
-    patientIDCell = dataTable{:,"PatientID"};
 
-    % Initialize a map to track features and their corresponding PatientIDs
-    featurePatientMap = containers.Map();
-
-    % Flatten the cell array and track PatientIDs for each feature
-    for i = 1:numel(selectedFeaturesCell)
-        features = selectedFeaturesCell{i}; % Get features for this patient
-        patientID = patientIDCell{i};       % Get the PatientID for this row
-
-        for j = 1:numel(features)
-            feature = features{j};
-            
-            if isKey(featurePatientMap, feature)
-                % Append the current PatientID if the feature already exists
-                featurePatientMap(feature) = [featurePatientMap(feature), patientID];
-            else
-                % Create a new entry with the current PatientID
-                featurePatientMap(feature) = {patientID};
-            end
-        end
-    end
-
-    % Convert the map keys and values to arrays
-    allFeatures = keys(featurePatientMap);
-    allPatientIDs = values(featurePatientMap);
+    % Flatten the cell array to get a list of all selected features
+    allFeatures = [selectedFeaturesCell{:}];
+    allFeatures = regexprep(allFeatures, '^([^-]+-[^-]+)-.*$', '$1');
+    % Uncomment above line if you want to remove the time stamps of the
+    % features
 
     % Count the occurrences of each feature
-    featureCounts = cellfun(@numel, allPatientIDs);
+    [uniqueFeatures, ~, idx] = unique(allFeatures);
+    uniqueFeatures = uniqueFeatures';
+    featureCounts = accumarray(idx, 1);
 
     % Sort the features by count in descending order
     [sortedCounts, sortIdx] = sort(featureCounts, 'descend');
-    sortedFeatures = allFeatures(sortIdx);
-    sortedPatientIDs = allPatientIDs(sortIdx);
+    sortedFeatures = uniqueFeatures(sortIdx);
 
-    % Debugging: Check the lengths of the variables before creating the table
-    disp('Length of sortedFeatures:');
-    disp(size(sortedFeatures'));
-    disp('Length of sortedCounts:');
-    disp(size(sortedCounts'));
-    disp('Length of patientIDStrings:');
-    disp(size(sortedPatientIDs'));
-
-    disp(sortedFeatures')
-    disp(sortedCounts')
-    disp(sortedPatientIDs')
-    % Create a table to display the sorted features, counts, and PatientIDs
-    rankedFeaturesTable = table(sortedFeatures', sortedCounts', sortedPatientIDs', ...
-        'VariableNames', {'FeatureName', 'Count', 'PatientIDs'});
+    % Create a table to display the sorted features and their counts
+    rankedFeaturesTable = table(sortedFeatures, sortedCounts, ...
+        'VariableNames', {'FeatureName', 'Count'});
 
     % Display the sorted results
     disp('Feature Occurrences (Sorted):');
     disp(rankedFeaturesTable);
-    
-    % Extract the experiment name (e.g., 'Exp1_LDA_ANOVA_ChannelPairs2_SlidingWindow_IPD') 
-    % from the original file name by capturing everything before '_ExperimentResults'
-    [fileDir, fileName, ~] = fileparts(matFilePath);
-    
-    % Extract the folder name from the file directory path
-    [~, folderName] = fileparts(fileDir);
 
-    % Extract the prefix (e.g., 'IPD', 'PLV') from the original file name before 'Table'
-    prefix = regexp(fileName, '[A-Z_]+(?=Table)', 'match', 'once');
-    
+    % Extract the prefix (e.g., 'PLV', 'IPD_PLV') from the original file name
+    [~, fileName, ~] = fileparts(matFilePath);
+    prefix = regexp(fileName, '^[A-Z_]+(?=Table)', 'match', 'once'); % Capture everything before 'Table'
+
     % Generate a new file name with the prefix
-    newFileName = sprintf('%s_%s_RankedFeatures', folderName, prefix);
-    
+    currentDate = datestr(now, 'yyyymmdd'); % Get the current date
+    newFileName = sprintf('%sTable_RankedOccuringFeatures_%s', prefix, currentDate);
+
     % Define the directory path and create it if it does not exist
     outputDir = fullfile(fileparts(matFilePath), 'SortedFeaturesRanked');
     if ~exist(outputDir, 'dir')
@@ -90,7 +75,7 @@ function AnalyseFeatures(matFilePath)
     fprintf('Table saved as .csv file: %s\n', csvFilePath);
 
     % Plotting of a Bar Graph (Horizontal)
-    figure('Visible', 'off');  % Create the figure, but do not display it
+    figure;
     barh(flip(sortedCounts), 'FaceColor', [0.2 0.4 0.6]);
 
     % Set the y-axis labels to feature names
@@ -100,7 +85,7 @@ function AnalyseFeatures(matFilePath)
     % Add labels and title
     ylabel('Feature Name');
     xlabel('Count');
-    title('Ranked Occurring Features');
+    title('Ranked Occuring Features');
 
     % Adjusting the figure size for better readability
     set(gcf, 'Position', [100, 100, 1200, 600]);  % [left, bottom, width, height]

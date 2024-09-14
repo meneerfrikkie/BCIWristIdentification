@@ -1,4 +1,9 @@
-ExperimentName = "Exp1_LDA_ANOVA_SlidingWindow_ChannelPair3";
+
+
+
+
+
+ExperimentName = "Exp1_LDA_ANOVA_ChannelPair2_SlidingWindow_PairsGreaterthan3";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
@@ -10,7 +15,7 @@ for p = 1:length(PatientIDs)
         %Variables that vary per patient allowing quick interchanging
         PatientID = PatientIDs{p};
         ChosenTableString = ChosenTableStrings{c}; 
-
+        
         %Makes the file for storing all the required information for the specific
         %experiemnt.
         if ispc
@@ -36,8 +41,11 @@ for p = 1:length(PatientIDs)
                 % For Windows
                 % Construct the file path using sprintf
                 IPDTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPDTable.mat', PatientID)).IPDTable;
-                PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\PLVTable.mat', PatientID)).PLVTable;
-                IPD_PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPD_PLVTable.mat', PatientID)).IPD_PLVTable;
+                %PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\PLVTable.mat', PatientID)).PLVTable;
+                %IPD_PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPD_PLVTable.mat', PatientID)).IPD_PLVTable;
+
+                %Temp
+                PLVTable = IPDTable; 
             elseif ismac || isunix 
                 IPDTable = load(sprintf('../OwnResults/%sRH/MatlabGeneratedData/IPDTable.mat', PatientID)).IPDTable;
                 PLVTable = load(sprintf('../OwnResults/%sRH/MatlabGeneratedData/PLVTable.mat', PatientID)).PLVTable;
@@ -107,8 +115,8 @@ for p = 1:length(PatientIDs)
         numFolds = 10; % Number of folds for cross-validation
         cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
         highestAccuracy = 0; 
-
-        for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
+        if c == 2
+       for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
             includedPredictorNames = predictors.Properties.VariableNames(featureIndex(1:i));
             iterationspredictors = predictors(:,includedPredictorNames);
             numberofFeatures = [numberofFeatures, i]; 
@@ -297,5 +305,7 @@ for p = 1:length(PatientIDs)
                     % Save the table to the CSV file
                     writetable(evaluationMetricsTable, savePathCSV);
         end
-    end 
-end
+        end 
+    end
+
+end 

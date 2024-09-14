@@ -19,19 +19,19 @@ function channel_pairs = GenerateAllChannelPairs()
 %             'FFC4h', 'FFT8h', 'FFT10h', 'AFF6h', 'AFp2'};
 % 
 % channels = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
-%  channels = {'C3','C4','F3','Fz','F4','P3','Pz','P4','T7','T8','C1', 'C2','FCC1h','FCC2h','CCP1h','CCP2h'};
+ %channels = {'C3','C4','F3','Fz','F4','P3','Pz','P4','T7','T8','C1', 'C2','FCC1h','FCC2h','CCP1h','CCP2h'};
 
 % Combined channel pairs 1 and 2 to check combination
 % First cell array
-channels1 = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
-
-% Second cell array
-channels2 = {'C3', 'C4', 'F3', 'Fz', 'F4', 'P3', 'Pz', 'P4', 'T7', 'T8', 'C1', 'C2', 'FCC1h', 'FCC2h', 'CCP1h', 'CCP2h'};
-
-% Combine without duplicates using union
-channels = union(channels1, channels2);
-
-disp(channels);
+% channels1 = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
+% 
+% % Second cell array
+% channels2 = {'C3', 'C4', 'F3', 'Fz', 'F4', 'P3', 'Pz', 'P4', 'T7', 'T8', 'C1', 'C2', 'FCC1h', 'FCC2h', 'CCP1h', 'CCP2h'};
+% 
+% % Combine without duplicates using union
+% channels = union(channels1, channels2);
+% 
+% disp(channels);
 % 
 % Initialize an empty cell array to store the pairs
 channel_pairs = {};
