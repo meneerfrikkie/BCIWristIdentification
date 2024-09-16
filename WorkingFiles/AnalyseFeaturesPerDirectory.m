@@ -28,7 +28,8 @@ for i = 1:numel(subFolders)
         if contains(matFiles(j).name, 'ExperimentResults')
             % Process the file
             disp(['Processing file: ', matFilePath]);
-            AnalyseFeatures(matFilePath);
+            rankedFeaturesTable = FrikkiesAnalyseFeatures(matFilePath);
+            RecommendFeatures(matFilePath, rankedFeaturesTable, 3)
         end
     end
 end

@@ -1,4 +1,4 @@
-function AnalyseFeatures(matFilePath)
+function [rankedFeaturesTable] = FrikkiesAnalyseFeatures(matFilePath)
     % Load the selected .mat file
     dataTable = load(matFilePath).dataTable;
 

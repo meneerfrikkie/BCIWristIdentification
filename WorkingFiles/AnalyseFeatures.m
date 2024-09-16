@@ -1,24 +1,23 @@
-
-function AnalyseFeatures(matFilePath)
+function [rankedFeaturesTable] = AnalyseFeatures(matFilePath)
     % Load the selected .mat file
     dataTable = load(matFilePath).dataTable;
 
-        sizeTable = size(dataTable,1);
+    sizeTable = size(dataTable, 1);
     i = 1; 
-    %Loop and remove repeat patientIDs 
+    % Loop and remove repeat patientIDs 
     while i < sizeTable 
         disp(i)
-        if (strcmp(dataTable{i,1}, dataTable{i+1,1}))
-           dataTable(i+1,:) = []; 
-           sizeTable = sizeTable -1; 
+        if strcmp(dataTable{i, 1}, dataTable{i + 1, 1})
+           dataTable(i + 1, :) = []; 
+           sizeTable = sizeTable - 1; 
            if i == 1
                i = 1; 
            else
-                i = i-1;
+                i = i - 1;
            end 
            disp('deleted')
         else 
-            i = i+1;
+            i = i + 1;
         end 
     end 
 
