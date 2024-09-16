@@ -14,8 +14,8 @@ subFolders = dir(fullfile(mainFolderPath, 'Exp*'));
 subFolders = subFolders([subFolders.isdir]); % Keep only directories
 
 % Initialize a table to store the results
-resultsTable = table('Size', [0 4], 'VariableTypes', {'string', 'double', 'double', 'double'}, ...
-                     'VariableNames', {'ExperimentName', 'OverallMeanAccuracy', 'MaxAccuracy', 'MinAccuracy'});
+resultsTable = table('Size', [0 7], 'VariableTypes', {'string', 'double', 'double', 'double','double','double','double'}, ...
+                     'VariableNames', {'ExperimentName', 'OverallMeanAccuracy', 'OverallMeanPrecision','OverallMeanRecall','OverallMeanF1Score','MaxAccuracy', 'MinAccuracy'});
 
 % Loop through each subfolder
 for i = 1:numel(subFolders)
@@ -32,13 +32,13 @@ for i = 1:numel(subFolders)
         % Check if the file name contains "ExperimentResults"
         if contains(matFiles(j).name, 'ExperimentResults')
             % Process the file using the CalculateMeanAccuracy function
-            [overallMeanAccuracy, maxAccuracy, minAccuracy] = CalculateMeanAccuracy(matFilePath);
+            [overallMeanAccuracy,overallMeanPrecision,overallMeanRecall,overallMeanF1Score, maxAccuracy, minAccuracy] = CalculateMeanAccuracy(matFilePath);
             
             % Create the experiment name by concatenating the subfolder name and the .mat file name
             experimentName = strcat(subFolders(i).name, '_', matFiles(j).name);
 
             % Append the results to the table
-            newRow = {experimentName, overallMeanAccuracy, maxAccuracy, minAccuracy};
+            newRow = {experimentName, overallMeanAccuracy,overallMeanPrecision,overallMeanRecall,overallMeanF1Score, maxAccuracy, minAccuracy};
             resultsTable = [resultsTable; newRow];
             
             % Display the current results

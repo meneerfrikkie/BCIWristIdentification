@@ -1,6 +1,6 @@
 % Calculate Mean Accuracy per Experiment
 
-function [overallMeanAccuracy, maxAccuracy, minAccuracy] = CalculateMeanAccuracy(filePath)
+function [overallMeanAccuracy,overallMeanPrecision,overallMeanRecall,overallMeanF1Score, maxAccuracy, minAccuracy] = CalculateMeanAccuracy(filePath)
     % Load the .mat file containing the data
     dataTable = load(filePath).dataTable;
 
@@ -26,6 +26,10 @@ function [overallMeanAccuracy, maxAccuracy, minAccuracy] = CalculateMeanAccuracy
 
     % Extract the "Mean Accuracy" column
     accuracyValues = dataTable{:,"Mean Accuracy"};
+    precisionValues = dataTable{:,"Mean Precision"};
+    recallValues = dataTable{:,"Mean Recall"}; 
+    f1ScoreValues = dataTable{:,"Mean F1-Score"}; 
+
 
     % Initialize a variable to hold the sum of mean accuracies
     totalMeanAccuracy = sum(accuracyValues);
@@ -36,4 +40,9 @@ function [overallMeanAccuracy, maxAccuracy, minAccuracy] = CalculateMeanAccuracy
     % Calculate the maximum and minimum accuracies
     maxAccuracy = max(accuracyValues) * 100;
     minAccuracy = min(accuracyValues) * 100;
+
+    %Mean Preciison, Recall and F1-Score
+    overallMeanPrecision = (sum(precisionValues)/length(precisionValues))*100; 
+    overallMeanRecall = (sum(recallValues)/length(recallValues))*100; 
+    overallMeanF1Score = (sum(f1ScoreValues)/length(f1ScoreValues))*100; 
 end
