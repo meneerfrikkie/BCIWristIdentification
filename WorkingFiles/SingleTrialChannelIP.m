@@ -9,7 +9,7 @@ function instantaneousPhase = SingleTrialChannelIP(trial, t1, t2, times)
     index_t2 = find(times == t2);
     
     % Debugging aid: display the size of the times array
-    disp(size(times))
+    % disp(size(times))
     
     % Extract the segment of the trial corresponding to the time range [t1, t2]
     trialSegment = trial(index_t1:index_t2); 
@@ -19,5 +19,5 @@ function instantaneousPhase = SingleTrialChannelIP(trial, t1, t2, times)
     
     % Compute the instantaneous phase of the analytic signal
     % Unwrap the phase to avoid discontinuities caused by phase jumps
-    instantaneousPhase = unwrap(angle(analyticSignal)); 
+    instantaneousPhase = angle(analyticSignal); 
 end

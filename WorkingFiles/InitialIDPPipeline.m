@@ -95,5 +95,5 @@ disp(selectedTrialData);
 clc
 
 data_WE = data.data_WE; 
-MultipleTrialsIDP(data_WE,CH_pairs,CH_selection,5000,8000,data.times)
+MultiTrialIDP(data_WE,CH_pairs,CH_selection,5000,8000,data.times)
 

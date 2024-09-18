@@ -10,10 +10,13 @@ if strcmp(OS, 'win')
     disp('Pathways defined for use with windows')
     
 elseif strcmp(OS, 'mac')
-
     addpath(pathdef_MAC);
     disp('Pathways defined for use with Mac')
-    
+
+elseif strcmp(OS, 'linux')  % Check for Linux
+    addpath(pathdef_MAC);
+    disp('Pathways defined for use with Linux');
+
 else
     disp('ERROR is input of operating system. Enter either win or mac')
 end
