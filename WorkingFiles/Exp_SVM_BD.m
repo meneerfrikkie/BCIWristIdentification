@@ -1,11 +1,18 @@
-ExperimentName = "Exp1_SVM_BD_SlidingWindow_ChannelPair3";
+ExperimentName = "Exp1_SVM_BD_ChannelPair3_SlidingWindow";
+Data  = 'GetReady'; 
+ChannelPair = 3;
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
+
+
+countTimeSlot = 0;
+countChannels = 0;
+
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
 ChosenTableStrings = {'PLVTable','IPDTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
-        clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
+         clearvars -except PatientIDs ChosenTableStrings ExperimentName countTimeSlot countChannels ChannelPair Data p c
 
         %Variables that vary per patient allowing quick interchanging
         PatientID = PatientIDs{p};
@@ -35,9 +42,11 @@ for p = 1:length(PatientIDs)
         if ispc
                 % For Windows
                 % Construct the file path using sprintf
-                IPDTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPDTable.mat', PatientID)).IPDTable;
-                PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\PLVTable.mat', PatientID)).PLVTable;
-                IPD_PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPD_PLVTable.mat', PatientID)).IPD_PLVTable;
+                experimentdatafilepath = sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\%s\\IPDTable%d.mat', PatientID,Data,ChannelPair);
+                IPDTable = load(experimentdatafilepath).IPDTable;
+                experimentdatafilepath = sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\%s\\PLVTable%d.mat', PatientID,Data,ChannelPair); 
+                PLVTable = load(experimentdatafilepath).PLVTable;
+                %IPD_PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPD_PLVTable.mat', PatientID)).IPD_PLVTable;
             elseif ismac || isunix 
                 IPDTable = load(sprintf('../OwnResults/%sRH/MatlabGeneratedData/IPDTable.mat', PatientID)).IPDTable;
                 PLVTable = load(sprintf('../OwnResults/%sRH/MatlabGeneratedData/PLVTable.mat', PatientID)).PLVTable;

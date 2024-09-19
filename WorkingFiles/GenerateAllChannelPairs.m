@@ -1,4 +1,4 @@
-function channel_pairs = GenerateAllChannelPairs()
+function channel_pairs = GenerateAllChannelPairs(channel)
 % Define the channel names
 % channels = {'Fp1', 'Fz', 'F3', 'F7', 'FT9', 'FC5', 'FC1', 'C3', 'T7', ...
 %             'TP9', 'CP5', 'CP1', 'Pz', 'P3', 'P7', 'O1', 'Oz', 'O2', ...
@@ -19,19 +19,32 @@ function channel_pairs = GenerateAllChannelPairs()
 %             'FFC4h', 'FFT8h', 'FFT10h', 'AFF6h', 'AFp2'};
 % 
 % channels = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
- %channels = {'C3','C4','F3','Fz','F4','P3','Pz','P4','T7','T8','C1', 'C2','FCC1h','FCC2h','CCP1h','CCP2h'};
-
-% Combined channel pairs 1 and 2 to check combination
-% First cell array
-% channels1 = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
-% 
-% % Second cell array
-% channels2 = {'C3', 'C4', 'F3', 'Fz', 'F4', 'P3', 'Pz', 'P4', 'T7', 'T8', 'C1', 'C2', 'FCC1h', 'FCC2h', 'CCP1h', 'CCP2h'};
-% 
-% % Combine without duplicates using union
-% channels = union(channels1, channels2);
-% 
-% disp(channels);
+%  channels = {'C3','C4','F3','Fz','F4','P3','Pz','P4','T7','T8','C1', 'C2','FCC1h','FCC2h','CCP1h','CCP2h'};
+        switch channel
+            case 1
+                disp("Channel Subset 1"); 
+                %file:///C:/Users/imia1/Downloads/hamner_embc2011.pdf
+                channels = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
+            case 2
+                %file:///C:/Users/imia1/Downloads/s12938-018-0534-0%20(2).pdf
+                disp("Channel Subset 2"); 
+                channels = {'C3','C4','F3','Fz','F4','P3','Pz','P4','T7','T8','C1', 'C2','FCC1h','FCC2h','CCP1h','CCP2h'}; 
+            case 3
+                disp("Channel Subset 3")
+                % Combined channel pairs 1 and 2 to check combination
+                % First cell array
+                channels1 = {'Fz', 'FC3', 'FC1', 'FCz', 'FC2', 'FC4', 'C3', 'C1', 'C2', 'C4', 'CP3', 'CP1', 'CPz', 'CP2', 'CP4'};
+                
+                % Second cell array
+                channels2 = {'C3', 'C4', 'F3', 'Fz', 'F4', 'P3', 'Pz', 'P4', 'T7', 'T8', 'C1', 'C2', 'FCC1h', 'FCC2h', 'CCP1h', 'CCP2h'};
+                
+                % Combine without duplicates using union
+                channels = union(channels1, channels2);
+                
+                disp(channels); 
+            otherwise
+                error('Channel Pair not recognized.');
+        end
 % 
 % Initialize an empty cell array to store the pairs
 channel_pairs = {};

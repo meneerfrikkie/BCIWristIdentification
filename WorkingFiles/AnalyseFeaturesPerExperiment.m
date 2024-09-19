@@ -21,5 +21,6 @@ for i = 1:numel(matFiles)
         % Process the file
         disp(matFilePath)
         AnalyseFeatures(matFilePath);
+        AnalyseFeaturesForTimestamps(matFilePath);
     end
 end
