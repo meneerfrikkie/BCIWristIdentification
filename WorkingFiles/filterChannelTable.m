@@ -34,7 +34,7 @@ function filteredTable = filterChannelTable(dataTable,count)
     end
     
     % Filter the table based on the selected columns
-    filteredTable = dataTable(:, selectedColumns);
+    filteredTable = [dataTable(:, selectedColumns),dataTable(:,end)];
     
     % Display the filtered table
     disp(filteredTable);

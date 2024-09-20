@@ -1,10 +1,10 @@
 
 
-function filteredTable = filterTimeSlotsTable(dataTable,count)
+%function filteredTable = filterTimeSlotsTable(dataTable,count)
 % 
-%     dataTable = load("../OwnResults/P1RH/MatlabGeneratedData/GetReady/SlidingWindow_ChannelPair2/IPDTable.mat").IPDTable;
-% 
-%     count = 21; 
+    dataTable = load("../OwnResults/P1RH/MatlabGeneratedData/GetReady/IPDTable2.mat").IPDTable;
+
+    count = 21; 
 
     [file, path] = uigetfile('*.mat', 'Select the MATLAB data file for the TimeSlots');
     if isequal(file, 0)
@@ -37,8 +37,12 @@ function filteredTable = filterTimeSlotsTable(dataTable,count)
     end
     
     % Filter the table based on the selected columns
-    filteredTable = dataTable(:, selectedColumns);
+    filteredTable = [dataTable(:, selectedColumns),dataTable(:,end)];
     
     % Display the filtered table
-    disp(filteredTable);
-end 
+    %disp(filteredTable);
+%end 
+
+
+%% 
+filteredTable.Properties.VariableNames
