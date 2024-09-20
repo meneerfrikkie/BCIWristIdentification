@@ -29,9 +29,7 @@ for i = 1:numel(subFolders)
             % Process the file
             disp(['Processing file: ', matFilePath]);
             rankedFeaturesTable = FrikkiesAnalyseFeatures(matFilePath);
-            rankedFeaturesTableChannels = AnalyseFeaturesForTimestamps(matFilePath);
-            RecommendFeatures(matFilePath, rankedFeaturesTable, 3)
-
+            rankedFeaturesTableTimestamps = AnalyseFeaturesForTimestamps(matFilePath);
         end
     end
 end

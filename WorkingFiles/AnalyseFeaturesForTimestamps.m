@@ -26,10 +26,25 @@ function [rankedFeaturesTable] = AnalyseFeaturesForTimestamps(matFilePath)
 
     % Flatten the cell array to get a list of all selected features
     allFeatures = [selectedFeaturesCell{:}];
-    
+
+    % Extract the prefix (e.g., 'PLV', 'IPD') from the original file name
+    [~, fileName, ~] = fileparts(matFilePath);
+    prefix = regexp(fileName, '^[A-Z_]+(?=Table)', 'match', 'once'); % Capture everything before 'Table'
+
     % Modify feature names to extract only the timestamps (e.g., 7700-8000)
     % The regular expression captures the timestamp portion
-    allFeatures = regexprep(allFeatures, '^[^-]+-[^-]+-([^-]+-[^-]+)-.*$', '$1');
+    
+    if strcmp(prefix, 'PLV')
+        % Use the new regex for PLV prefix
+        disp('Using new regex for PLV');
+        allFeatures = regexprep(allFeatures, '.*-(\d+-\d+)', '$1');
+    elseif strcmp(prefix, 'IPD')
+        % Use the old regex for IPD prefix
+        disp('Using old regex for IPD');
+        allFeatures = regexprep(allFeatures, '^[^-]+-[^-]+-([^-]+-[^-]+)-.*$', '$1');
+    else
+        error('Unknown prefix: %s', prefix);
+    end
     
     % Count the occurrences of each timestamp
     [uniqueFeatures, ~, idx] = unique(allFeatures);
@@ -48,13 +63,8 @@ function [rankedFeaturesTable] = AnalyseFeaturesForTimestamps(matFilePath)
     disp('Feature Occurrences (Sorted):');
     disp(rankedFeaturesTable);
 
-    % Extract the prefix (e.g., 'PLV', 'IPD_PLV') from the original file name
-    [~, fileName, ~] = fileparts(matFilePath);
-    prefix = regexp(fileName, '^[A-Z_]+(?=Table)', 'match', 'once'); % Capture everything before 'Table'
-
     % Generate a new file name with the prefix
-    currentDate = datestr(now, 'yyyymmdd'); % Get the current date
-    newFileName = sprintf('%sTable_RankedOccuringFeaturesChannels', prefix);
+    newFileName = sprintf('%sTable_RankedOccuringFeaturesTimestamps', prefix);
 
     % Define the directory path and create it if it does not exist
     outputDir = fullfile(fileparts(matFilePath), 'SortedFeaturesRanked');
