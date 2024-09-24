@@ -3,16 +3,12 @@
 function filteredTable = filterChannelTable(dataTable,count)
     %dataTable = load("../OwnResults/P1RH/MatlabGeneratedData/GetReady/SlidingWindow_ChannelPair2/IPDTable.mat").IPDTable;
 
-    %count = 21; 
+    %dataTable = PLVTable; 
+    %count = 10; 
 
-    [file, path] = uigetfile('*.mat', 'Select the MATLAB data file for the Channel Pairs');
-    if isequal(file, 0)
-        disp('User canceled the operation');
-        return;
-    end
-    
-    % Load the selected .mat file
-    channelPairTable = load(fullfile(path, file)).rankedFeaturesTable;
+       % Load the selected .mat file
+    channelPairTable = load("../OwnResults/ExperimentsResults/Getting Read and Hold Movement Window/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20240921.mat").rankedFeaturesTable;
+
 
     channePairs = {};
 
@@ -30,12 +26,19 @@ function filteredTable = filterChannelTable(dataTable,count)
     
     % Loop through each time slot and check if it's part of any column name
     for i = 1:length(channePairs)
-        selectedColumns = selectedColumns | contains(columnNames, channePairs{i});
+        disp(channePairs{i})
+        for j = 1:length(columnNames)-1
+            dashIndices = strfind(columnNames{j}, '-');
+            %disp(dashIndices)
+            if strcmp(columnNames{j}(1:dashIndices(2)-1), channePairs{i})
+                selectedColumns(j) = strcmp(columnNames{j}(1:dashIndices(2)-1), channePairs{i});
+            end 
+        end 
     end
     
     % Filter the table based on the selected columns
     filteredTable = [dataTable(:, selectedColumns),dataTable(:,end)];
     
     % Display the filtered table
-    disp(filteredTable);
+    %disp(filteredTable);
 end 

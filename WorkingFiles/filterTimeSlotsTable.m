@@ -1,19 +1,14 @@
 
 
-%function filteredTable = filterTimeSlotsTable(dataTable,count)
+function filteredTable = filterTimeSlotsTable(dataTable,count)
+
+%     dataTable = load("../OwnResults/P1RH/MatlabGeneratedData/GetReady/IPDTable2.mat").IPDTable;
 % 
-    dataTable = load("../OwnResults/P1RH/MatlabGeneratedData/GetReady/IPDTable2.mat").IPDTable;
+%     count = 21; 
 
-    count = 21; 
-
-    [file, path] = uigetfile('*.mat', 'Select the MATLAB data file for the TimeSlots');
-    if isequal(file, 0)
-        disp('User canceled the operation');
-        return;
-    end
     
     % Load the selected .mat file
-    timeSlotTable = load(fullfile(path, file)).rankedFeaturesTable;
+    timeSlotTable = load("../OwnResults/ExperimentsResults/Getting Read and Hold Movement Window/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeaturesTimestamps.mat").rankedFeaturesTable;
 
     timeSlots = {};
 
@@ -41,8 +36,5 @@
     
     % Display the filtered table
     %disp(filteredTable);
-%end 
+end 
 
-
-%% 
-filteredTable.Properties.VariableNames
