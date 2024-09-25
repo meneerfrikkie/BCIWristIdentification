@@ -24,6 +24,7 @@ MatlabGeneratedData/
 
 # Ignore directory containing eeglab
 eeglab2024.1/
+eeglab2024.2/
 
 # Ignore files related to OS's in WorkingFiles directory
 WorkingFiles/SetupDir.m
