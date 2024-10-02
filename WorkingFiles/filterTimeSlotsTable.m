@@ -8,7 +8,7 @@ function filteredTable = filterTimeSlotsTable(dataTable,count)
 
     
     % Load the selected .mat file
-    timeSlotTable = load("../OwnResults/ExperimentsResults/Getting Read and Hold Movement Window/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeaturesTimestamps.mat").rankedFeaturesTable;
+    timeSlotTable = load("D:\Github\BCIWristIdentification2\OwnResults\ExperimentsResults\Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow\SortedFeaturesRanked\PLVTable_RankedOccuringFeaturesTimestamps.mat").rankedFeaturesTable;
 
     timeSlots = {};
 
@@ -17,8 +17,21 @@ function filteredTable = filterTimeSlotsTable(dataTable,count)
             timeSlots{1,end+1} = timeSlotTable(i,1).FeatureName;
         end 
     end 
-
+% 
+%     t1 = 700; 
+%     t2 = 1700; 
+%     t3 = 5400; 
+%     t4 = 7700; 
+% 
+%     for t = t1:100:t2
+%         timeSlots{1,end+1} = sprintf('%d-%d',t,t+300); 
+%     end 
+% 
+%     for t = t3:100:t4
+%         timeSlots{1,end+1} = sprintf('%d-%d',t,t+300); 
+%     end
 %     timeSlots = {'0-300'}; 
+    disp(timeSlots)
     
     %Need to get the column names of the actual dataTable 
     columnNames = dataTable.Properties.VariableNames;

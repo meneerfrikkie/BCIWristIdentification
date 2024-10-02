@@ -1,18 +1,27 @@
-ExperimentName = "Exp1_SVM_ANOVA_ChannelPair3_SlidingWindow";
-Data  = 'GetReady'; 
-ChannelPair = 3;
+
+
+
+
+
+
+
+function Exp1_SVM_ANOVA(ChannelPairNumber, DataName,startingNumberofFeatures,stepsize,totalNumberofFeatures,countedTimeSlots)
+ExperimentName = sprintf("Exp1_LinearSVM_ANOVA_ChannelPair%d_%s_SlidingWindow",ChannelPairNumber,DataName);
+Data  = DataName; 
+ChannelPair = ChannelPairNumber;
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 
 
-countTimeSlot = 0;
+countTimeSlot = countedTimeSlots;
 countChannels = 0;
 
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
+% PatientIDs = {'P1','P2','P3'};
 ChosenTableStrings = {'PLVTable','IPDTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
-        clearvars -except PatientIDs ChosenTableStrings ExperimentName countTimeSlot countChannels ChannelPair Data p c
+        clearvars -except PatientIDs ChosenTableStrings ExperimentName countTimeSlot countChannels ChannelPair startingNumberofFeatures stepsize  totalNumberofFeatures Data p c
 
         %Variables that vary per patient allowing quick interchanging
         PatientID = PatientIDs{p};
@@ -58,6 +67,12 @@ for p = 1:length(PatientIDs)
             case 'IPDTable'
                 ChosenTable = IPDTable; 
             case 'PLVTable'
+%                 disp(length(PLVTable.Properties.VariableNames));
+%                 PLVTable = filterChannelTable(PLVTable,countChannels);
+%                 PLVTable = filterTimeSlotsTable(PLVTable,countTimeSlot); 
+%                 disp(length(PLVTable.Properties.VariableNames));
+%                 ChosenTable = PLVTable; 
+%                 disp(length(ChosenTable.Properties.VariableNames));
                 ChosenTable = PLVTable; 
             case 'IPD_PLVTable'
                 ChosenTable = IPD_PLVTable; 
@@ -70,9 +85,9 @@ for p = 1:length(PatientIDs)
         predictorNames = columnNames(1,1:end-1);
         
         %Feature selection
-        startingNumberofFeatures = 1; 
-        stepsize = 1; 
-        totalNumberofFeatures = 200; 
+%         startingNumberofFeatures = 1; 
+%         stepsize = 1; 
+%         totalNumberofFeatures = 200; 
         %totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
@@ -141,8 +156,8 @@ for p = 1:length(PatientIDs)
                 YtestFold = ytrain(testIndices);
             
                 SVMModel = fitcsvm(XtrainFold, YtrainFold, ...
-                        'KernelFunction', 'rbf', ...
-                        'Standardize', true);
+                    'KernelFunction', 'linear', ...  % Change to 'linear'
+                    'Standardize', true);
             
                 YtestPred = predict(SVMModel, XtestFold);
             
@@ -296,4 +311,5 @@ for p = 1:length(PatientIDs)
                     writetable(evaluationMetricsTable, savePathCSV);
         end
     end 
+end
 end

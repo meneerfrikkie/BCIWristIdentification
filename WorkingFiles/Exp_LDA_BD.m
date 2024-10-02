@@ -1,7 +1,7 @@
-ExperimentName = "Exp1_LDA_BD_ChannelPair3_SlidingWindow";
+ExperimentName = "Exp2_LDA_BD_ChannelPair2_SlidingWindow";
 
-Data  = 'GetReady'; 
-ChannelPair = 3;
+Data  = 'Holding'; 
+ChannelPair = 2;
 rng(1); % Fixed seed for consistent results
 
 countTimeSlot = 0;

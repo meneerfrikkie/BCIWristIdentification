@@ -1,6 +1,6 @@
 % Calculate Mean Accuracy per Experiment
 
-function [overallMeanAccuracy,overallMeanPrecision,overallMeanRecall,overallMeanF1Score, maxAccuracy, minAccuracy] = CalculateMeanAccuracy(filePath)
+function [overallMeanAccuracy,overallStd,overallMeanPrecision,overallMeanRecall,overallMeanF1Score, maxAccuracy, minAccuracy] = CalculateMeanAccuracy(filePath)
     % Load the .mat file containing the data
     dataTable = load(filePath).dataTable;
 
@@ -36,6 +36,7 @@ function [overallMeanAccuracy,overallMeanPrecision,overallMeanRecall,overallMean
 
     % Calculate the overall mean accuracy
     overallMeanAccuracy = (totalMeanAccuracy / length(accuracyValues)) * 100;
+    overallStd = std(accuracyValues); 
 
     % Calculate the maximum and minimum accuracies
     maxAccuracy = max(accuracyValues) * 100;

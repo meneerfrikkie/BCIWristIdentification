@@ -1,4 +1,4 @@
-ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization_ChannelPairs3";
+ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimization_ChannelPairs2_SlidingWindow";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
 %PatientIDs = {'P3','P4','P5','P6','P7'};
@@ -66,8 +66,8 @@ for p = 1:length(PatientIDs)
                 %Feature selection
         startingNumberofFeatures = 1; 
         stepsize = 1; 
-        %totalNumberofFeatures = 100; 
-        totalNumberofFeatures = length(predictorNames); 
+        totalNumberofFeatures = 200; 
+        %totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;

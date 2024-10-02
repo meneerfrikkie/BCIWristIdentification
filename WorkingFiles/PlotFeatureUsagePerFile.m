@@ -7,7 +7,12 @@ clc;
 
 
 
-matfile = "D:\Documents\GitHub\BCIWristIdentification\OwnResults\Getting Read and Hold Movement Window\Getting Read and Hold Movement Window\Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow\SortedFeaturesRanked\PLVTable_RankedOccuringFeaturesTimestamps.mat";
-PlotFeatureUsage(matfile,42)
+matfile = "D:/Github/BCIWristIdentification2/OwnResults/ExperimentsResults/Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeaturesTimestamps.mat";
+
+data = load(matfile).rankedFeaturesTable;
+timestamps = data.Count; 
+
+    PlotFeatureUsage(matfile,30)
+
 
 % PlotFeatureUsage('test_features.mat', 10);

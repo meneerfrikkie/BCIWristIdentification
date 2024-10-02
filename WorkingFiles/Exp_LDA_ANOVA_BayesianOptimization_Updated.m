@@ -60,8 +60,7 @@ for p = 1:length(PatientIDs)
         
         columnNames = ChosenTable.Properties.VariableNames;
         predictorNames = columnNames(1,1:end-1);
-        isCategoricalPredictor = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
-        
+
         
         %Feature selection
         startingNumberofFeatures = 1; 
@@ -77,11 +76,9 @@ for p = 1:length(PatientIDs)
         newPredictorMatrix = zeros(size(predictorMatrix));
         
         for i = 1:size(predictorMatrix, 2)
-            if isCategoricalPredictor(i)
-                newPredictorMatrix(:,i) = grp2idx(predictorMatrix{:,i});
-            else
+
                 newPredictorMatrix(:,i) = predictorMatrix{:,i};
-            end
+
         end
         predictorMatrix = newPredictorMatrix;
         responseVector = grp2idx(response);
@@ -100,7 +97,7 @@ for p = 1:length(PatientIDs)
         accuracies = [];
         numberofFeatures = []; 
         highestAccuraciesNumberFeatures = [];
-        HighestincludedPredictorNames = [];
+        HighestincludedPredictorNames = {};
 
         HighestAccuracyBestParam = [];
                    
@@ -122,7 +119,7 @@ for p = 1:length(PatientIDs)
             disp(size(iterationspredictors));
 
             % Define the LDA model function for Bayesian Optimization
-            ldaModel = @(params)fitcdiscr(iterationspredictors, response, ...
+            ldaModel = @(params)fitcdiscr(zscore(table2array(iterationspredictors)), response, ...
                 'Delta', params.Delta, ...
                 'Gamma', params.Gamma, ...
                 'CrossVal', 'on', ...
@@ -165,12 +162,24 @@ for p = 1:length(PatientIDs)
                 YtrainFold = ytrain(trainIndices);
                 XtestFold = xtrain(testIndices, :);
                 YtestFold = ytrain(testIndices);
-            
-                LDAModel = fitcdiscr(XtrainFold, YtrainFold, ...
+
+                % Compute mean and standard deviation from training data
+                meanTrain = mean(table2array(XtrainFold));
+                stdTrain = std(table2array(XtrainFold));
+
+                % Standardize the training data
+                standardizedPredictors = (table2array(XtrainFold) - meanTrain) ./ stdTrain;
+                
+                % Train the LDA model
+                LDAModel = fitcdiscr(standardizedPredictors, YtrainFold, ...
                 'Delta', bestParams.Delta, ...
                 'Gamma', bestParams.Gamma);
                 
-                YtestPred = predict(LDAModel, XtestFold);
+                % Standardize the test data using training data statistics
+                standardizedTestData = (table2array(XtestFold) - meanTrain) ./ stdTrain;
+                
+                % Predict using the standardized test data
+                YtestPred = predict(LDAModel, standardizedTestData);
             
                 foldAccuracy(fold) = sum(YtestPred == YtestFold) / length(YtestFold);
                 % Calculate confusion metrics for the current fold
@@ -190,7 +199,7 @@ for p = 1:length(PatientIDs)
                         highestAccuracy = mean(foldAccuracy);
                         %Reset the varaibles for the new highest accuracy
                         highestAccuraciesNumberFeatures = i;
-                        HighestincludedPredictorNames = includedPredictorNames;
+                        HighestincludedPredictorNames = {includedPredictorNames};
                         HighestAccuracyBestParams = bestParams;
                         HighestfoldAccuracies = foldAccuracy;
                         HighestfoldPrecisions = foldPrecision';
@@ -199,7 +208,7 @@ for p = 1:length(PatientIDs)
                     elseif (floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000)
                         %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
-                        HighestincludedPredictorNames = {HighestincludedPredictorNames;includedPredictorNames};
+                        HighestincludedPredictorNames(end+1) ={ includedPredictorNames};
                         HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 

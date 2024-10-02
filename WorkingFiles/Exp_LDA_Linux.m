@@ -3,13 +3,13 @@
 
 
 
-ExperimentName = "Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow";
-Data  = 'GetReady'; 
+ExperimentName = "Exp1_LDA_ANOVA_ChannelPair3__TimeSLotsGreaterThan12_SlidingWindow_ChanelPairsGreaterThan3";
+Data  = 'GetReadyAndHolding'; 
 ChannelPair = 3;
 rng(1); % Fixed seed for consistent results
 
-countTimeSlot = 0;
-countChannels = 0;
+countTimeSlot = 12;
+countChannels = 3;
 
 % Define all patient IDs and table names
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
@@ -63,7 +63,12 @@ for p = 1:length(PatientIDs)
             case 'IPDTable'
                 ChosenTable = IPDTable; 
             case 'PLVTable'
+                disp(length(PLVTable.Properties.VariableNames));
+                PLVTable = filterChannelTable(PLVTable,countChannels);
+                PLVTable = filterTimeSlotsTable(PLVTable,countTimeSlot); 
+                disp(length(PLVTable.Properties.VariableNames));
                 ChosenTable = PLVTable; 
+                disp(length(ChosenTable.Properties.VariableNames));
             case 'IPD_PLVTable'
                 ChosenTable = IPD_PLVTable; 
             otherwise
@@ -73,6 +78,7 @@ for p = 1:length(PatientIDs)
         
         columnNames = ChosenTable.Properties.VariableNames;
         predictorNames = columnNames(1,1:end-1);
+
         
         %Feature selection
         startingNumberofFeatures = 1; 
@@ -82,6 +88,7 @@ for p = 1:length(PatientIDs)
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
+
         
         predictors = standardizeMissing(predictors, {Inf, -Inf});
         predictorMatrix = normalize(predictors);
@@ -121,7 +128,8 @@ for p = 1:length(PatientIDs)
         numFolds = 10; % Number of folds for cross-validation
         cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
         highestAccuracy = 0; 
-        %if c == 2 || c == 1
+        if c == 1 
+            %disp(predictorNames);
            for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
                 includedPredictorNames = predictors.Properties.VariableNames(featureIndex(1:i));
                 iterationspredictors = predictors(:,includedPredictorNames);
@@ -139,6 +147,9 @@ for p = 1:length(PatientIDs)
                 for fold = 1:numFolds
                     trainIndices = cvPartition.training(fold);
                     testIndices = cvPartition.test(fold);
+
+                    %disp(trainIndices)
+                    %disp(testIndices)
                 
                     XtrainFold = xtrain(trainIndices, :);
                     YtrainFold = ytrain(trainIndices);
@@ -311,7 +322,7 @@ for p = 1:length(PatientIDs)
                         % Save the table to the CSV file
                         writetable(evaluationMetricsTable, savePathCSV);
             end
-        %end 
+        end 
     end
 
 end 

@@ -3,7 +3,7 @@
 
 
 
-data = load("../OwnResults/ExperimentsResults/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow_ChanelPairsGreaterThan3/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20240924.mat").rankedFeaturesTable;
+data = load("../OwnResults/ExperimentsResults/Getting Ready and Hold Movement Window Pair Optimization/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow_ChanelPairsGreaterThan3/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20240924.mat").rankedFeaturesTable;
 
 
 channelPairs = data.FeatureName';
@@ -17,7 +17,7 @@ for i = 1:length(uniqueChannels)
     for j = 1:length(channelPairs)
         dashIndices = strfind(channelPairs{j}, '-');
         if strcmp(channelPairs{j}(1:dashIndices-1),uniqueChannels{i}) || strcmp(channelPairs{j}(dashIndices+1:end),uniqueChannels{i})
-        countForChannels(i) = countForChannels(i) + 1; 
+            countForChannels(i) = countForChannels(i) + 1; 
         end 
     end 
 end 

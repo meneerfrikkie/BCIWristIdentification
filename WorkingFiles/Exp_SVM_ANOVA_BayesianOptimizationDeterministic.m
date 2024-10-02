@@ -1,37 +1,20 @@
-
-
-
-
-
-
-
-
-
-function Exp_SVM_BD(ChannelPairNumber, DataName,startingNumberofFeatures,stepsize,totalNumberofFeatures)
-
-ExperimentName = sprintf("Exp1_LinearSVM_BD_ChannelPair%d_%s_SlidingWindow",ChannelPairNumber,DataName);
-Data  = DataName; 
-ChannelPair = ChannelPairNumber;
+ExperimentName = "Exp1_SVM_ANOVA_BayesianOptimizationDeterministic_ChannelPairs3";
 rng(1); % Fixed seed for consistent results
 % Define all patient IDs and table names
-
-
-countTimeSlot = 0;
-countChannels = 0;
-
+%PatientIDs = {'P3','P4','P5','P6','P7'};
+%PatientIDs = {'P1','P2','P3','P4','P5','P6','P7'};
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
-% PatientIDs = {'P1','P2','P3'};
 ChosenTableStrings = {'PLVTable','IPDTable'};
 for p = 1:length(PatientIDs)
     for c = 1:length(ChosenTableStrings)
-         clearvars -except PatientIDs ChosenTableStrings ExperimentName countTimeSlot countChannels startingNumberofFeatures totalNumberofFeatures stepsize ChannelPair Data p c
+        clearvars -except PatientIDs ChosenTableStrings ExperimentName p c
 
         %Variables that vary per patient allowing quick interchanging
         PatientID = PatientIDs{p};
         ChosenTableString = ChosenTableStrings{c}; 
 
         %Makes the file for storing all the required information for the specific
-        %experiemnt
+        %experiemnt.
         if ispc
                 % For Windows
                 folderPath = fullfile(sprintf('..\\OwnResults\\%sRH\\%s',PatientID,ExperimentName));
@@ -54,11 +37,9 @@ for p = 1:length(PatientIDs)
         if ispc
                 % For Windows
                 % Construct the file path using sprintf
-                experimentdatafilepath = sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\%s\\IPDTable%d.mat', PatientID,Data,ChannelPair);
-                IPDTable = load(experimentdatafilepath).IPDTable;
-                experimentdatafilepath = sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\%s\\PLVTable%d.mat', PatientID,Data,ChannelPair); 
-                PLVTable = load(experimentdatafilepath).PLVTable;
-                %IPD_PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPD_PLVTable.mat', PatientID)).IPD_PLVTable;
+                IPDTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPDTable.mat', PatientID)).IPDTable;
+                PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\PLVTable.mat', PatientID)).PLVTable;
+                IPD_PLVTable = load(sprintf('..\\OwnResults\\%sRH\\MatlabGeneratedData\\IPD_PLVTable.mat', PatientID)).IPD_PLVTable;
             elseif ismac || isunix 
                 IPDTable = load(sprintf('../OwnResults/%sRH/MatlabGeneratedData/IPDTable.mat', PatientID)).IPDTable;
                 PLVTable = load(sprintf('../OwnResults/%sRH/MatlabGeneratedData/PLVTable.mat', PatientID)).PLVTable;
@@ -80,23 +61,36 @@ for p = 1:length(PatientIDs)
         
         columnNames = ChosenTable.Properties.VariableNames;
         predictorNames = columnNames(1,1:end-1);
-        
+
         %Feature selection
-%         startingNumberofFeatures = 1; 
-%         stepsize = 1; 
-%         totalNumberofFeatures = 200; 
+        startingNumberofFeatures = 1; 
+        stepsize = 1; 
+        totalNumberofFeatures = 200; 
         %totalNumberofFeatures = length(predictorNames); 
         
         predictors = ChosenTable(:, predictorNames);
         response = ChosenTable.Class;
         
-        %Calc BD distance for all features
-        X = table2array(predictors); 
-        y = logical(response); 
+        predictors = standardizeMissing(predictors, {Inf, -Inf});
+        predictorMatrix = normalize(predictors);
+        newPredictorMatrix = zeros(size(predictorMatrix));
         
-        Z = bhattacharyyaDistance(X,y);
+        for i = 1:size(predictorMatrix, 2)
 
-        [~, sortedIndices] = sort(Z, 'descend');
+                newPredictorMatrix(:,i) = predictorMatrix{:,i};
+
+        end
+        predictorMatrix = newPredictorMatrix;
+        responseVector = grp2idx(response);
+        
+        % Rank features using ANOVA algorithm
+        for i = 1:size(predictorMatrix, 2)
+            pValues(i) = anova1(...
+                predictorMatrix(:,i), ...
+                responseVector, ...
+                'off');
+        end
+        [~,featureIndex] = sort(-log(pValues), 'descend');
         
         
         %Generating the plot to determine the best number of features
@@ -114,15 +108,55 @@ for p = 1:length(PatientIDs)
           
         
         numFolds = 10; % Number of folds for cross-validation
+        % Set seed for reproducibility
+        rng(1); % You can use any integer as a seed value
+        
+        % Create the cvpartition for hyperparameter tuning
+        cvPartitionHyperparameter = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
+        
+        % Set a different seed if you want to ensure distinct partitions for final evaluation
+        rng(2); % Different seed value
+        
+        % Create the cvpartition for final evaluation
         cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
         highestAccuracy = 0; 
 
         for i = startingNumberofFeatures:stepsize:totalNumberofFeatures
-            includedPredictorNames = predictors.Properties.VariableNames(sortedIndices(1:i));
+            includedPredictorNames = predictors.Properties.VariableNames(featureIndex(1:i));
             iterationspredictors = predictors(:,includedPredictorNames);
             numberofFeatures = [numberofFeatures, i]; 
         
             disp(size(iterationspredictors));
+
+             % Define the SVM model function for Bayesian Optimization
+            svmModel = @(params)fitcsvm(iterationspredictors, response, ...
+                'KernelFunction', 'rbf', ...
+                'BoxConstraint', params.BoxConstraint, ...
+                'KernelScale', params.KernelScale, ...
+                'Standardize', true, ...
+                'CrossVal', 'on', ...
+                'CVPartition',cvPartitionHyperparameter);
+            
+            % Define the optimization variables
+            optimVars = [
+                optimizableVariable('BoxConstraint', [1e-3, 1e3], 'Transform', 'log');
+                optimizableVariable('KernelScale', [1e-3, 1e3], 'Transform', 'log')
+                ];
+            
+            % Define the objective function for Bayesian optimization
+            minfn = @(params)kfoldLoss(svmModel(params));
+            
+            % Run Bayesian Optimization without plots
+            results = bayesopt(minfn, optimVars, ...
+                'MaxObjectiveEvaluations', 30, ...
+                'Verbose', 0, ...  % Set to 0 for minimal output
+                'IsObjectiveDeterministic', true, ...
+                'AcquisitionFunctionName', 'expected-improvement-plus', ...
+                'PlotFcn', []); % Suppress the plots
+        
+            
+            % Extract the best hyperparameters
+            bestParams = bestPoint(results);
 
             % Use the full combined table for cross-validation
             xtrain = iterationspredictors;
@@ -141,8 +175,10 @@ for p = 1:length(PatientIDs)
                 YtestFold = ytrain(testIndices);
             
                 SVMModel = fitcsvm(XtrainFold, YtrainFold, ...
-                    'KernelFunction', 'linear', ...  % Change to 'linear'
-                    'Standardize', true);
+                        'KernelFunction', 'rbf', ...
+                        'BoxConstraint', bestParams.BoxConstraint, ...
+                        'KernelScale', bestParams.KernelScale, ...
+                        'Standardize', true);
             
                 YtestPred = predict(SVMModel, XtestFold);
             
@@ -157,14 +193,17 @@ for p = 1:length(PatientIDs)
             end
                 
                 accuracies = [accuracies, mean(foldAccuracy)];
-
+                disp((floor(mean(foldAccuracy) * 10000) / 10000) >= (floor(highestAccuracy * 10000) / 10000));
+                disp((floor(mean(foldAccuracy) * 10000) / 10000) > (floor(highestAccuracy * 10000) / 10000));
+                disp((floor(mean(foldAccuracy) * 10000) / 10000) == (floor(highestAccuracy * 10000) / 10000));
+                disp(size(HighestincludedPredictorNames));
                 if (floor(mean(foldAccuracy) * 10000) / 10000) >= (floor(highestAccuracy * 10000) / 10000)
-
                     if (floor(mean(foldAccuracy) * 10000) / 10000) > (floor(highestAccuracy * 10000) / 10000)
                         highestAccuracy = mean(foldAccuracy);
                         %Reset the varaibles for the new highest accuracy
                         highestAccuraciesNumberFeatures = i;
-                        HighestincludedPredictorNames = {includedPredictorNames};
+                        HighestincludedPredictorNames={ includedPredictorNames};
+                        HighestAccuracyBestParams = bestParams;
                         HighestfoldAccuracies = foldAccuracy;
                         HighestfoldPrecisions = foldPrecision';
                         HighestfoldRecalls = foldRecall';
@@ -173,6 +212,7 @@ for p = 1:length(PatientIDs)
                         %Assing with the new highest stuff 
                         highestAccuraciesNumberFeatures = [highestAccuraciesNumberFeatures,i];
                         HighestincludedPredictorNames(end+1) ={ includedPredictorNames};
+                        HighestAccuracyBestParams = [HighestAccuracyBestParams;bestParams];
                         HighestfoldAccuracies = [HighestfoldAccuracies,foldAccuracy];
                         HighestfoldPrecisions = [HighestfoldPrecisions,foldPrecision']; 
                         HighestfoldRecalls = [HighestfoldRecalls,foldRecall']; 
@@ -193,7 +233,7 @@ for p = 1:length(PatientIDs)
         title(sprintf('Accuracy vs Number of Features For Patient %s',PatientID));
         grid on;
         
-        
+         
         %Required to store the accuracies and the number of features for the
         %feature selection stage. 
         
@@ -236,8 +276,13 @@ for p = 1:length(PatientIDs)
         saveas(gcf, fullPlotPath);
         saveas(gcf, fullPlotPathPNG);
 
+
         for f = 1:length(highestAccuraciesNumberFeatures)
                     storedPredictorNames = HighestincludedPredictorNames(1,f);
+                    
+                    % Write the data to a CSV file
+                    %writecell(dataToWrite, fullFilePathCSV);
+
 
                     % Construct the filename using the specified format
                     fileName = sprintf('SelectedFeatures_%d.mat',highestAccuraciesNumberFeatures(f));
@@ -249,7 +294,35 @@ for p = 1:length(PatientIDs)
                     
                     % Save the arrays to the .mat file
                     save(fullFilePath, 'storedPredictorNames');
-                    % writecell(storedPredictorNames, fullFilePathCSV)
+
+
+                    % Define the path for Anova Feature Selection folder
+                    hyperparametertuningFolderPath = fullfile(folderPath, 'HyperParameterTuning');
+                    
+                    
+                    hyperparametertuningFolderPath = fullfile(hyperparametertuningFolderPath,ChosenTableString);
+                    
+                    
+                    % Check if the folder exists, if not, create it
+                    if ~exist(hyperparametertuningFolderPath, 'dir')
+                        mkdir(hyperparametertuningFolderPath);
+                    end
+                    
+                    % Construct the filename using the specified format
+                    fileName = sprintf('%s_TunedParameters_%d.mat', ...
+                                       ChosenTableString,highestAccuraciesNumberFeatures(f));
+                    csvFilename = sprintf('%s_TunedParameters_%d.csv', ...
+                                       ChosenTableString,highestAccuraciesNumberFeatures(f));
+                    
+                    % Full path to save the .mat file in the AnovaFeatureSelection folder
+                    fullFilePath = fullfile(hyperparametertuningFolderPath, fileName);
+                    fullFilePathCSV = fullfile(hyperparametertuningFolderPath,csvFilename);
+
+                    HighestAccuracyBestParam = HighestAccuracyBestParams(f,:);
+                    
+                    % Save the arrays to the .mat file
+                    save(fullFilePath, 'HighestAccuracyBestParam');
+                    writetable(HighestAccuracyBestParam, fullFilePathCSV);
                     
                     
                     %Store the results of the stratified k-fold cross-validation 
@@ -297,5 +370,3 @@ for p = 1:length(PatientIDs)
         end
     end 
 end
-
-end 

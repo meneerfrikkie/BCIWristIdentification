@@ -59,8 +59,10 @@ for i = 1:length(PatientIDs)
 %     %Generate PLV features for Wrist Flexion (WF)
 %     PLVTable_WF = MultiTrialPLV(data_WF, CH_pairs, CH_selection, 5000, 8000, data.times, class_WF, PatientID);
 
-t1 = 0; 
-t2 = 1700; 
+% t1 = 0; 
+% t2 = 1700; 
+t1 = 5000; 
+t2 = 7700; 
 
     % Multi-Trial Analysis for Wrist Extension (WE)
 % 
