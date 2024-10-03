@@ -1,47 +1,65 @@
+% Load the .mat file (replace with the correct path)
+matfile = "/Users/muaawiyah/Desktop/Investigation/OwnResults/Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow/Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20241002.mat";
+data = load(matfile).rankedFeaturesTable;
 
+countValues = [data{:, 2}];
 
+% Store unique count values
+uniqueValues = unique(countValues);
 
+% Sort the unique values in ascending order
+sortedValues = sort(uniqueValues);
 
+% Get the path of the .mat file
+[filePath, ~, ~] = fileparts(matfile);
 
-data = load("../OwnResults/ExperimentsResults/Getting Ready and Hold Movement Window Pair Optimization/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow_ChanelPairsGreaterThan3/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20240924.mat").rankedFeaturesTable;
+% Loop through each value in sortedValues
+for i = 1:length(sortedValues)
+    % Get features above the current sorted value
+    channelPairs = GetFeaturesAboveCount(data, sortedValues(i));
 
+    uniqueChannels = CheckChannelPairs(channelPairs);
 
-channelPairs = data.FeatureName';
+    countForChannels = zeros(1, length(uniqueChannels));
 
-uniqueChannels = CheckChannelPairs(channelPairs);
+    % Count occurrences for each unique channel
+    for k = 1:length(uniqueChannels)
+        for j = 1:length(channelPairs)
+            dashIndices = strfind(channelPairs{j}, '-');
+            if strcmp(channelPairs{j}(1:dashIndices-1), uniqueChannels{k}) || strcmp(channelPairs{j}(dashIndices+1:end), uniqueChannels{k})
+                countForChannels(k) = countForChannels(k) + 1;
+            end
+        end
+    end
 
-countForChannels = zeros(1,length(uniqueChannels));
+    % Sort the channels based on their count in descending order
+    [~, countForChannelsIndex] = sort(countForChannels, 'descend');
+    uniqueChannels = uniqueChannels(countForChannelsIndex);
+    countForChannels = countForChannels(countForChannelsIndex);
 
+    % Normalize counts to percentage
+    countForChannels = (countForChannels ./ max(countForChannels)) * 100;
 
-for i = 1:length(uniqueChannels)
-    for j = 1:length(channelPairs)
-        dashIndices = strfind(channelPairs{j}, '-');
-        if strcmp(channelPairs{j}(1:dashIndices-1),uniqueChannels{i}) || strcmp(channelPairs{j}(dashIndices+1:end),uniqueChannels{i})
-            countForChannels(i) = countForChannels(i) + 1; 
-        end 
-    end 
-end 
+    % Create a bar plot
+    figure;
+    bar(countForChannels);
 
-[~,countForChannelsIndex] = sort(countForChannels, 'descend');
+    % Set x-axis tick labels to the channel names
+    xticks(1:length(uniqueChannels));
+    xticklabels(uniqueChannels);
 
-uniqueChannels = uniqueChannels(countForChannelsIndex);
-countForChannels = countForChannels(countForChannelsIndex);
+    % Add labels and title
+    xlabel('Channels');
+    ylabel('Count');
+    title(['Channel Count Histogram for Sorted Value: ', num2str(sortedValues(i))]);
 
+    % Rotate x-axis labels for better visibility
+    xtickangle(45);
 
-countForChannels = (countForChannels./(max(countForChannels)))*100;
+    % Save the figure with a unique filename that includes the sorted value count
+    saveFileName = fullfile(filePath, ['ChannelCountHistogram_SortedValue_' num2str(sortedValues(i)) '.png']);
+    saveas(gcf, saveFileName);
 
-% Create a bar plot
-figure;
-bar(countForChannels);
-
-% Set x-axis tick labels to the channel names
-xticks(1:length(uniqueChannels));  % Set ticks at 1, 2, 3, ..., n
-xticklabels(uniqueChannels);  % Assign corresponding channel names
-
-% Add labels and title
-xlabel('Channels');
-ylabel('Count');
-title('Channel Count Histogram');
-
-% Rotate x-axis labels for better visibility (optional)
-xtickangle(45);
+    % Close the figure to free up memory
+    close(gcf);
+end
