@@ -7,7 +7,7 @@ function filteredTable = filterChannelTable(dataTable,count)
     %count = 10; 
 
        % Load the selected .mat file
-    channelPairTable = load("../OwnResults/ExperimentsResults/Getting Read and Hold Movement Window/Exp1_LDA_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20240921.mat").rankedFeaturesTable;
+    channelPairTable = load("D:\Github\BCIWristIdentification2\OwnResults\ExperimentsResults\Linear SVM Get Ready and Hold Movement Window\Exp1_LinearSVM_ANOVA_ChannelPair3_GetReadyAndHolding_SlidingWindow\SortedFeaturesRanked\PLVTable_RankedOccuringFeatures_20241003.mat").rankedFeaturesTable;
 
 
     channePairs = {};

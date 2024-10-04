@@ -1,7 +1,14 @@
-ExperimentName = "Exp2_LDA_BD_ChannelPair2_SlidingWindow";
 
-Data  = 'Holding'; 
-ChannelPair = 2;
+
+
+
+
+
+function Exp_LDA_BD(ChannelPairNumber, DataName, numberFolds)
+ExperimentName = sprintf("Exp%d_LDA_BD_ChannelPair%s_%s_SlidingWindow",numberFolds,ChannelPairNumber,DataName);
+
+Data  = DataName; 
+ChannelPair = ChannelPairNumber;
 rng(1); % Fixed seed for consistent results
 
 countTimeSlot = 0;
@@ -100,7 +107,7 @@ for p = 1:length(PatientIDs)
         HighestfoldF1Scores = []; 
           
         
-        numFolds = 10; % Number of folds for cross-validation
+        numFolds = numberFolds; % Number of folds for cross-validation
         cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
         highestAccuracy = 0; 
 
@@ -294,4 +301,5 @@ for p = 1:length(PatientIDs)
                     writetable(evaluationMetricsTable, savePathCSV);
         end
     end 
+end
 end

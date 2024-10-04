@@ -7,9 +7,9 @@
 
 
 
-function Exp_SVM_BD(ChannelPairNumber, DataName,startingNumberofFeatures,stepsize,totalNumberofFeatures)
+function Exp_SVM_BD(ChannelPairNumber, DataName,startingNumberofFeatures,stepsize,totalNumberofFeatures,numberFolds)
 
-ExperimentName = sprintf("Exp1_LinearSVM_BD_ChannelPair%d_%s_SlidingWindow",ChannelPairNumber,DataName);
+ExperimentName = sprintf("Exp%_LinearSVM_BD_ChannelPair%d_%s_SlidingWindow",numberFolds,ChannelPairNumber,DataName);
 Data  = DataName; 
 ChannelPair = ChannelPairNumber;
 rng(1); % Fixed seed for consistent results
@@ -113,7 +113,7 @@ for p = 1:length(PatientIDs)
         HighestfoldF1Scores = []; 
           
         
-        numFolds = 10; % Number of folds for cross-validation
+        numFolds = numberFolds; % Number of folds for cross-validation
         cvPartition = cvpartition(response, 'KFold', numFolds, 'Stratify', true);
         highestAccuracy = 0; 
 

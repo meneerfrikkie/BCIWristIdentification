@@ -20,7 +20,7 @@ for i = 1:numel(matFiles)
     if contains(matFiles(i).name, 'ExperimentResults')
         % Process the file
         disp(matFilePath)
-        rankedFeaturesTable = FrikkiesAnalyseFeatures(matFilePath);
+        rankedFeaturesTable = AnalyseFeatures(matFilePath);
         rankedFeaturesTableTimestamps = AnalyseFeaturesForTimestamps(matFilePath);
     end
 end

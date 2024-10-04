@@ -23,7 +23,7 @@
 % IPD_PLVTable_Exp1_SVM_ANOVA = CombineExperimentResults(ExperimentName,PatientIDs,ChosenTableStrings)
 % 
 % 
-ExperimentName = 'Exp1_LDA_ANOVA_SlidingWindow_ReducedPairsGreaterThan32';
+ExperimentName = 'Exp4_LinearSVM_ANOVA_ChannelPair3_GetReady_SlidingWindow';
 PatientIDs = {'P1','P2','P3','P4','P5','P6','P7','P8','P9','P10','P11','P12','P13','P14'};
 ChosenTableStrings = {'IPDTable'};
 

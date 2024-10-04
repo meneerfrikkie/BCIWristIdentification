@@ -8,7 +8,7 @@ function filteredTable = filterTimeSlotsTable(dataTable,count)
 
     
     % Load the selected .mat file
-    timeSlotTable = load("D:\Github\BCIWristIdentification2\OwnResults\ExperimentsResults\Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow\SortedFeaturesRanked\PLVTable_RankedOccuringFeaturesTimestamps.mat").rankedFeaturesTable;
+    timeSlotTable = load("D:\Github\BCIWristIdentification2\OwnResults\ExperimentsResults\Linear SVM Get Ready and Hold Movement Window\Exp1_LinearSVM_ANOVA_ChannelPair3_GetReadyAndHolding_SlidingWindow\SortedFeaturesRanked\PLVTable_RankedOccuringFeaturesTimestamps.mat").rankedFeaturesTable;
 
     timeSlots = {};
 

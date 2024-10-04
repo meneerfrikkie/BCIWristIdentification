@@ -1,5 +1,5 @@
 % Load the .mat file (replace with the correct path)
-matfile = "/Users/muaawiyah/Desktop/Investigation/OwnResults/Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow/Exp1_LinearSVM_ANOVA_ChannelPair3_SlidingWindow/SortedFeaturesRanked/PLVTable_RankedOccuringFeatures_20241002.mat";
+matfile = "D:\Github\BCIWristIdentification2\OwnResults\ExperimentsResults\Linear SVM Get Ready and Hold Movement Window\Exp1_LinearSVM_ANOVA_ChannelPair3_GetReadyAndHolding_SlidingWindow\SortedFeaturesRanked\PLVTable_RankedOccuringFeatures_20241003.mat";
 data = load(matfile).rankedFeaturesTable;
 
 countValues = [data{:, 2}];
@@ -8,7 +8,7 @@ countValues = [data{:, 2}];
 uniqueValues = unique(countValues);
 
 % Sort the unique values in ascending order
-sortedValues = sort(uniqueValues);
+sortedValues = [5];
 
 % Get the path of the .mat file
 [filePath, ~, ~] = fileparts(matfile);
